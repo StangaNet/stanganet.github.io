@@ -17,10 +17,11 @@ export { kindLabels } from './docs/types';
 import type { LibraryDoc } from './docs/types';
 import { coreLibrary } from './docs/core';
 import { contentFlowLibrary } from './docs/contentflow';
+import { resilienceLibrary } from './docs/resilience';
 import { localizeLibraries, localizeLibrary, localizeType } from './docs/localize';
 
 /** English source of truth (API identifiers are always English). */
-export const librariesEn: LibraryDoc[] = [coreLibrary, contentFlowLibrary];
+export const librariesEn: LibraryDoc[] = [coreLibrary, contentFlowLibrary, resilienceLibrary];
 
 /** @deprecated Prefer getLibraries(locale) for localized UI/docs text. */
 export const libraries: LibraryDoc[] = librariesEn;

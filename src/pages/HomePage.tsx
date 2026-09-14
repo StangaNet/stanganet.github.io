@@ -21,6 +21,12 @@ const libraryHighlightsEn: Record<string, readonly [string, string][]> = {
     ['ContentState', 'Draft → Pending → Approved → Published'],
     ['ContentReviewLog', 'Immutable review trail'],
   ],
+  resilience: [
+    ['IResilientExecutor', 'Execute via named pipelines → Result'],
+    ['ResiliencePipelineSettings', 'Retry, circuit breaker, timeout'],
+    ['ResilienceErrors', 'Typed failures instead of exceptions'],
+    ['AddStangaNetLibResilience', 'DI registration from config or code'],
+  ],
 };
 
 const libraryHighlightsIt: Record<string, readonly [string, string][]> = {
@@ -35,6 +41,12 @@ const libraryHighlightsIt: Record<string, readonly [string, string][]> = {
     ['IContentWorkflowService<T>', 'Transizioni di stato con Result'],
     ['ContentState', 'Draft → Pending → Approved → Published'],
     ['ContentReviewLog', 'Trail di review immutabile'],
+  ],
+  resilience: [
+    ['IResilientExecutor', 'Esegui via pipeline nominate → Result'],
+    ['ResiliencePipelineSettings', 'Retry, circuit breaker, timeout'],
+    ['ResilienceErrors', 'Fallimenti tipizzati al posto delle eccezioni'],
+    ['AddStangaNetLibResilience', 'Registrazione DI da config o codice'],
   ],
 };
 
