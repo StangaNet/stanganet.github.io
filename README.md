@@ -82,7 +82,7 @@ src/
 
 ## Adding documentation
 
-Edit `src/data/docs/core.ts`, `contentflow.ts`, or `resilience.ts` (schema in `types.ts`). Register libraries in `src/data/docs.ts`.
+Edit `src/data/docs/core.ts`, `contentflow.ts`, `resilience.ts`, or `concurrency.ts` (schema in `types.ts`). Register libraries in `src/data/docs.ts`.
 
 
 ## GitHub Pages

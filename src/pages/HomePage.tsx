@@ -27,6 +27,12 @@ const libraryHighlightsEn: Record<string, readonly [string, string][]> = {
     ['ResilienceErrors', 'Typed failures instead of exceptions'],
     ['AddStangaNetLibResilience', 'DI registration from config or code'],
   ],
+  concurrency: [
+    ['IKeyedLock', 'Per-key async mutual exclusion'],
+    ['IAsyncThrottle', 'Semaphore concurrency limiter'],
+    ['IWorkQueue<T>', 'Bounded producer-consumer queue'],
+    ['IDebouncer', 'Per-key debounce of async actions'],
+  ],
 };
 
 const libraryHighlightsIt: Record<string, readonly [string, string][]> = {
@@ -47,6 +53,12 @@ const libraryHighlightsIt: Record<string, readonly [string, string][]> = {
     ['ResiliencePipelineSettings', 'Retry, circuit breaker, timeout'],
     ['ResilienceErrors', 'Fallimenti tipizzati al posto delle eccezioni'],
     ['AddStangaNetLibResilience', 'Registrazione DI da config o codice'],
+  ],
+  concurrency: [
+    ['IKeyedLock', 'Mutua esclusione async per chiave'],
+    ['IAsyncThrottle', 'Limitatore di concorrenza a semaforo'],
+    ['IWorkQueue<T>', 'Coda producer-consumer limitata'],
+    ['IDebouncer', 'Debounce per chiave di azioni async'],
   ],
 };
 
