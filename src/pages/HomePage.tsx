@@ -164,7 +164,7 @@ export function HomePage() {
   const { t, path, locale } = useI18n();
   const libraries = getLibraries(locale);
   const core = libraries.find((l) => l.slug === 'core');
-  const coreVersion = core?.version ?? '1.0.1';
+  const coreVersion = core?.version ?? '1.0.2';
 
   const concepts = [
     { title: t.home.conceptDomainTitle, copy: t.home.conceptDomainCopy, icon: Boxes },

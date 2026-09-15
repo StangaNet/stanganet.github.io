@@ -3,7 +3,7 @@ import type { LibraryDoc } from './types';
 export const concurrencyLibrary: LibraryDoc = {
   slug: 'concurrency',
   name: 'StangaNetLib.Concurrency',
-  version: '1.0.0',
+  version: '1.0.1',
   targetFrameworks: ['net8.0', 'net9.0'],
   tagline: 'Keyed locks, throttling, work queues, debouncing, and atomic counters',
   description:
