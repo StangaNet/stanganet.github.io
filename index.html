@@ -30,15 +30,6 @@
         }
       })();
     </script>
-    <script>
-      (function () {
-        var redirect = sessionStorage.getItem('__spa_redirect');
-        if (redirect) {
-          sessionStorage.removeItem('__spa_redirect');
-          window.history.replaceState(null, '', redirect);
-        }
-      })();
-    </script>
   </head>
   <body>
     <div id="root"></div>

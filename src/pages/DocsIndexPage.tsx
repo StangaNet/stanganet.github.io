@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { getLibraries, allTypesCount } from '../data/docs';
-import { KindBadge } from '../components/docs/primitives';
 import { useI18n } from '../i18n';
 
 export function DocsIndexPage() {
@@ -41,11 +40,6 @@ export function DocsIndexPage() {
                     {fw}
                   </span>
                 ))}
-              </div>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {library.namespaces.slice(0, 3).map((ns) =>
-                  ns.types[0] ? <KindBadge key={ns.name} kind={ns.types[0].kind} /> : null,
-                )}
               </div>
             </Link>
           );

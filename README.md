@@ -93,6 +93,8 @@ This repository is intended as **`StangaNet/stanganet.github.io`** (site root, `
 2. Push to `main` (or run the **Deploy GitHub Pages** workflow manually)
 3. Site URL: `https://stanganet.github.io`
 
+Deep links (`/en`, `/it/docs/...`) work on refresh: the Vite build copies `dist/index.html` to `dist/404.html`, so GitHub Pages serves the SPA for unknown paths **without changing the URL**.
+
 Workflows live under `.github/workflows/`:
 - `ci.yml` — typecheck and production build on push/PR
 - `deploy.yml` — build `dist` and publish to GitHub Pages
