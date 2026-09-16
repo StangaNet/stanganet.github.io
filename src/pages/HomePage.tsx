@@ -33,6 +33,12 @@ const libraryHighlightsEn: Record<string, readonly [string, string][]> = {
     ['IWorkQueue<T>', 'Bounded producer-consumer queue'],
     ['IDebouncer', 'Per-key debounce of async actions'],
   ],
+  gdpr: [
+    ['IConsentRepository', 'Consent grant / withdraw with history'],
+    ['IDsarService', 'DSAR lifecycle and Art. 12 deadlines'],
+    ['IPseudonymizationService', 'AES-256-GCM + SHA-256 anonymize'],
+    ['RequireConsentAttribute', 'Endpoint consent enforcement'],
+  ],
 };
 
 const libraryHighlightsIt: Record<string, readonly [string, string][]> = {
@@ -59,6 +65,12 @@ const libraryHighlightsIt: Record<string, readonly [string, string][]> = {
     ['IAsyncThrottle', 'Limitatore di concorrenza a semaforo'],
     ['IWorkQueue<T>', 'Coda producer-consumer limitata'],
     ['IDebouncer', 'Debounce per chiave di azioni async'],
+  ],
+  gdpr: [
+    ['IConsentRepository', 'Consenso grant / withdraw con cronologia'],
+    ['IDsarService', 'Ciclo di vita DSAR e scadenze Art. 12'],
+    ['IPseudonymizationService', 'AES-256-GCM + anonimizzazione SHA-256'],
+    ['RequireConsentAttribute', 'Enforcement del consenso sugli endpoint'],
   ],
 };
 

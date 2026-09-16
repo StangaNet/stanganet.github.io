@@ -19,10 +19,11 @@ import { coreLibrary } from './docs/core';
 import { contentFlowLibrary } from './docs/contentflow';
 import { resilienceLibrary } from './docs/resilience';
 import { concurrencyLibrary } from './docs/concurrency';
+import { gdprLibrary } from './docs/gdpr';
 import { localizeLibraries, localizeLibrary, localizeType } from './docs/localize';
 
 /** English source of truth (API identifiers are always English). */
-export const librariesEn: LibraryDoc[] = [coreLibrary, contentFlowLibrary, resilienceLibrary, concurrencyLibrary];
+export const librariesEn: LibraryDoc[] = [coreLibrary, contentFlowLibrary, resilienceLibrary, concurrencyLibrary, gdprLibrary];
 
 /** @deprecated Prefer getLibraries(locale) for localized UI/docs text. */
 export const libraries: LibraryDoc[] = librariesEn;
