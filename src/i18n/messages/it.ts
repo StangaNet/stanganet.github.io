@@ -92,6 +92,7 @@ export const it: Messages = {
     librariesLead: 'Sfoglia tipi, metodi e contratti nella suite StangaNetLib.',
     typesDocumented: 'tipi documentati',
     overview: 'Panoramica',
+    examples: 'Esempi',
     install: 'Installazione',
     repository: 'Repository',
     namespacesImport: 'I namespace si importano con',

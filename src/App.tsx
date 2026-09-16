@@ -12,6 +12,7 @@ import { DocsLayout } from './components/layout/DocsLayout';
 import { DocsIndexPage } from './pages/DocsIndexPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { TypePage } from './pages/TypePage';
+import { ExamplesPage } from './pages/ExamplesPage';
 import { NotFound } from './pages/NotFound';
 import { AboutPage } from './pages/AboutPage';
 import { I18nProvider, detectLocale, isLocale } from './i18n';
@@ -80,6 +81,7 @@ export function App() {
         >
           <Route index element={<DocsIndexPage />} />
           <Route path=":library" element={<LibraryPage />} />
+          <Route path=":library/examples" element={<ExamplesPage />} />
           <Route path=":library/:type" element={<TypePage />} />
         </Route>
 

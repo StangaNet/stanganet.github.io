@@ -61,6 +61,20 @@ function LibraryNavGroup({
             >
               {t.docs.overview}
             </NavLink>
+            <NavLink
+              to={path(`/docs/${library.slug}/examples`)}
+              onClick={onNavigate}
+              className={({ isActive }) =>
+                cn(
+                  'block rounded px-2 py-1 text-sm transition-colors',
+                  isActive
+                    ? 'bg-primary/10 font-medium text-primary'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                )
+              }
+            >
+              {t.docs.examples}
+            </NavLink>
           </div>
           {library.namespaces.map((ns) => (
             <div key={ns.name} className="min-w-0">

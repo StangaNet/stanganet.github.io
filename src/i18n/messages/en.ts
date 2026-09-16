@@ -90,6 +90,7 @@ export const en = {
     librariesLead: 'Browse types, methods and contracts across the StangaNetLib suite.',
     typesDocumented: 'types documented',
     overview: 'Overview',
+    examples: 'Examples',
     install: 'Install',
     repository: 'Repository',
     namespacesImport: 'Namespaces are imported as',

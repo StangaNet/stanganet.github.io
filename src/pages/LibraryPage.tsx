@@ -30,6 +30,14 @@ export function LibraryPage() {
       <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">{library.name}</h1>
       <p className="mt-3 text-lg text-muted-foreground">{library.tagline}</p>
       <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">{library.description}</p>
+      <p className="mt-4">
+        <Link
+          to={path(`/docs/${library.slug}/examples`)}
+          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+        >
+          {t.docs.examples} →
+        </Link>
+      </p>
 
       <div className="mt-6 flex flex-wrap items-center gap-3 text-sm">
         <span className="rounded border border-border bg-muted px-2 py-1 font-mono text-xs">
