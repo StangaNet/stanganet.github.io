@@ -1,0 +1,117 @@
+# StangaNetLib Documentation
+
+Official static documentation site for the **[StangaNet](https://github.com/StangaNet)** suite of .NET libraries.
+
+Published at **[https://stanganet.github.io](https://stanganet.github.io)** (`base: '/'`).
+
+## About the project
+
+- **Libraries** in the suite are written **entirely by hand** — design, implementation, and packaging — by [Enrico Stangherlin](https://github.com/stangherlin-enrico/).
+- **This documentation website** was built partly independently and partly with the assistance of various AI tools (layout and implementation helpers).
+- **API documentation content and updates** are produced **via AI** that inspects the public GitHub repositories and aligns the structured docs data with the source.
+
+Author portfolio: [https://stangherlin-enrico.github.io/](https://stangherlin-enrico.github.io/)
+
+## Features
+
+- Homepage, About, and structured API reference (`/docs`)
+- Light / dark theme (`localStorage`)
+- **i18n**: English (`/en/...`) and Italian (`/it/...`) for UI and documentation prose; code identifiers stay English
+- Copyable code snippets with lightweight C# / XML highlighting
+- SPA-friendly `404.html` for GitHub Pages
+
+## Tech stack
+
+- React 18 + TypeScript + Vite
+- React Router
+- Tailwind CSS v4 (`@tailwindcss/vite`)
+- lucide-react
+
+## Getting started
+
+```bash
+npm install
+npm run dev
+```
+
+App: `http://localhost:5173` → redirects to `/en` or `/it` from browser/storage preference.
+
+```bash
+npm run build
+```
+
+Output: `dist/`.
+
+## Routes
+
+| Path | Description |
+|------|-------------|
+| `/` | Redirect to `/en` or `/it` |
+| `/:lang` | Homepage |
+| `/:lang/about` | About |
+| `/:lang/docs` | Library index |
+| `/:lang/docs/:library` | Library overview |
+| `/:lang/docs/:library/examples` | Usage examples |
+| `/:lang/docs/:library/:type` | Type documentation |
+
+Legacy paths (`/docs`, `/about`, `/core`) redirect under the detected locale.
+
+## Project structure
+
+```text
+src/
+  app/                     # entry, providers, nested routes
+  content/docs/            # API source of truth (types, libraries, examples, i18n)
+  features/
+    docs/                  # DocsShell, API pages, docs UI
+    marketing/             # Home, About, NotFound
+  shared/
+    components/            # SiteHeader/Footer/Shell, icons, ui
+    config/site.ts         # brand + external URLs
+    i18n/                  # locales, messages, provider
+    theme/
+    lib/
+    utils/
+  styles/
+```
+
+Path alias: `@/*` → `src/*`.
+
+## Internationalization
+
+- UI strings: `src/shared/i18n/messages/en.ts` and `it.ts`
+- API prose IT map: `src/content/docs/i18n/docStringsIt.ts`
+- Locale in the URL prefix; preference also stored as `stanganet-locale`
+- Translated: UI + API prose (summary, remarks, descriptions).
+- **Not** translated: C# type/method names, signatures, parameter names, and code samples
+
+## Documented libraries
+
+All public packages under `StangaNetLib.*` are registered in `src/content/docs/registry.ts` (Core plus Auth, Caching, Concurrency, ContentFlow, Cryptography, EventBus, FeatureFlags, Gdpr, Jobs, Media, Notifications, Observability, RequestProtection, Resilience, SchemaRegistry, Search, Storage, Tenancy).
+
+## Adding / refreshing documentation
+
+- Hand-authored reference (preferred for Core): edit `src/content/docs/libraries/*.ts` (schema in `types.ts`).
+- Bulk regenerate from local library sources: `node scripts/generate-lib-docs.mjs` (skips Core). Then wire exports in `registry.ts` and examples in `examples.ts` if needed.
+- Italian prose map: `src/content/docs/i18n/docStringsIt.ts`.
+
+## GitHub Pages
+
+This repository is intended as **`StangaNet/stanganet.github.io`** (site root, `base: '/'`).
+
+1. **Settings → Pages → Build and deployment → Source**: *GitHub Actions*
+2. Push to `main` (or run the **Deploy GitHub Pages** workflow manually)
+3. Site URL: `https://stanganet.github.io`
+
+Deep links (`/en`, `/it/docs/...`) work on refresh: the Vite build copies `dist/index.html` to `dist/404.html`, so GitHub Pages serves the SPA for unknown paths **without changing the URL**.
+
+Workflows live under `.github/workflows/`:
+- `ci.yml` — typecheck and production build on push/PR
+- `deploy.yml` — build `dist` and publish to GitHub Pages
+
+## License
+
+See [LICENSE](./LICENSE).
+
+- **Site structure** (layout, components, i18n scaffolding, build config): permissive **MIT**-style grant; largely AI-assisted.
+- **Documentation content** about the libraries: subject to each library’s own LICENSE under [StangaNet](https://github.com/StangaNet), or the organization defaults if a package has none.
