@@ -1,0 +1,89 @@
+StangaNet Documentation Site License
+====================================
+
+Copyright (c) StangaNet and Enrico Stangherlin
+
+This repository contains the source code, layout, and tooling of the
+StangaNetLib documentation website (https://stanganet.github.io).
+
+
+1. Website structure and implementation (permissive)
+----------------------------------------------------
+
+The website structure and implementation — including HTML/CSS/TypeScript
+React components, routing, theming, internationalization scaffolding,
+build configuration, and similar site infrastructure — are made available
+under the MIT License terms below.
+
+Much of this material was produced with the assistance of AI tools used
+as coding helpers for layout, structure, and implementation. That does
+not change the license grant for the site structure: you may still use,
+copy, modify, merge, publish, distribute, and sublicense that structure
+under the MIT terms.
+
+MIT License (site structure only)
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files for the website
+structure (the "Site Software"), to deal in the Site Software without
+restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Site
+Software, and to permit persons to whom the Site Software is furnished to
+do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Site Software.
+
+THE SITE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SITE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SITE SOFTWARE.
+
+
+2. Documentation content about the libraries
+--------------------------------------------
+
+Prose and structured data that describe the StangaNetLib libraries
+(API summaries, examples embedded for illustration, library overviews,
+and similar documentation content) are provided for reference only.
+
+That content is not licensed under the MIT grant above. It refers to,
+and remains subject to, the license of each corresponding library:
+
+  - Prefer the LICENSE (or equivalent) file in the library’s own
+    repository under https://github.com/StangaNet
+  - If a library has no explicit license file, the applicable terms
+    are those of the StangaNet organization defaults and any license
+    stated on the organization’s or repository’s GitHub pages
+
+In particular, StangaNet library source code is typically distributed
+under the “StangaNet Source-Available License” (or a successor). Viewing
+this documentation does not grant rights beyond those licenses. Names,
+signatures, and behavior of APIs remain the intellectual property of
+their respective owners under those terms.
+
+Do not assume that MIT (or any other permissive license) applies to the
+library packages, their source, or non-structural documentation excerpts
+that merely describe them.
+
+
+3. Third-party components
+-------------------------
+
+Dependencies declared in package.json (React, Vite, Tailwind, and other
+npm packages) remain under their own licenses. Fonts and any other
+third-party assets are subject to their respective licenses.
+
+
+4. Summary
+----------
+
+  Site structure / tooling  →  MIT (this file, section 1)
+  Library docs content      →  Each library’s / org’s license (section 2)
+  npm and other third parties → Their own licenses (section 3)
+
+For questions about library licensing, see the LICENSE files in the
+individual repositories at https://github.com/StangaNet
