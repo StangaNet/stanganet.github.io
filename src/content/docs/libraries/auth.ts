@@ -1,0 +1,289 @@
+import type { LibraryDoc } from '../types';
+
+export const authLibrary: LibraryDoc = {
+  slug: 'auth',
+  name: 'StangaNetLib.Auth',
+  version: '1.0.1',
+  targetFrameworks: ['net8.0', 'net9.0'],
+  tagline: 'Authentication and authorization building blocks for ASP.NET',
+  description:
+    'Auth primitives for token handling, identity, and policy helpers aligned with StangaNetLib.Core Result patterns.',
+  repository: 'https://github.com/StangaNet/StangaNetLib.Auth',
+  namespaces: [
+    {
+      name: 'StangaNetLib.Auth.Abstractions',
+      summary: 'Types in StangaNetLib.Auth.Abstractions.',
+      types: [
+        {
+          slug: 'i-auth0-management-service',
+          name: 'IAuth0ManagementService',
+          displayName: 'IAuth0ManagementService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Auth.Abstractions',
+          summary: 'Provides access to the Auth0 Management API for user and role management. Requires ManagementClientId and ManagementClientSecret to be configured. Register via AddStangaNetLibAuth0ManagementService().',
+          signature: 'public interface IAuth0ManagementService',
+        },
+        {
+          slug: 'i-jwt-token-generator',
+          name: 'IJwtTokenGenerator',
+          displayName: 'IJwtTokenGenerator',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Auth.Abstractions',
+          summary: 'interface IJwtTokenGenerator.',
+          signature: 'public interface IJwtTokenGenerator',
+        },
+        {
+          slug: 'i-password-hasher',
+          name: 'IPasswordHasher',
+          displayName: 'IPasswordHasher',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Auth.Abstractions',
+          summary: 'interface IPasswordHasher.',
+          signature: 'public interface IPasswordHasher',
+        },
+        {
+          slug: 'i-refresh-token-repository',
+          name: 'IRefreshTokenRepository',
+          displayName: 'IRefreshTokenRepository',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Auth.Abstractions',
+          summary: 'Persistence contract for refresh tokens. Implement this interface in the consuming project against your chosen data store.',
+          signature: 'public interface IRefreshTokenRepository',
+        },
+        {
+          slug: 'i-token-revocation-service',
+          name: 'ITokenRevocationService',
+          displayName: 'ITokenRevocationService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Auth.Abstractions',
+          summary: 'Adds access tokens to a revocation blacklist and checks whether a token has been revoked. Inject this service in logout handlers and other places that need to invalidate a token before its natural expiry.',
+          signature: 'public interface ITokenRevocationService',
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Auth.Extensions',
+      summary: 'Types in StangaNetLib.Auth.Extensions.',
+      types: [
+        {
+          slug: 'application-builder-extensions',
+          name: 'ApplicationBuilderExtensions',
+          displayName: 'ApplicationBuilderExtensions',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Extensions',
+          summary: 'class ApplicationBuilderExtensions.',
+          signature: 'public static class ApplicationBuilderExtensions',
+          methods: [
+            { name: 'UseStangaNetLibAuth', signature: 'public static IApplicationBuilder UseStangaNetLibAuth(this IApplicationBuilder app)', summary: 'Adds in order: UseAuthentication, TokenRevocationMiddleware, UseAuthorization. Must be called after UseRouting and before endpoint mapping.', parameters: [{ name: 'app', type: 'IApplicationBuilder', description: 'app' }], returns: 'IApplicationBuilder', isStatic: true },
+          ],
+        },
+        {
+          slug: 'service-collection-extensions',
+          name: 'ServiceCollectionExtensions',
+          displayName: 'ServiceCollectionExtensions',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Extensions',
+          summary: 'class ServiceCollectionExtensions.',
+          signature: 'public static class ServiceCollectionExtensions',
+          methods: [
+            { name: 'AddStangaNetLibAuth', signature: 'public static IServiceCollection AddStangaNetLibAuth( this IServiceCollection services, IConfiguration configuration)', summary: 'Registers JWT Bearer authentication (self-signed, HMAC-SHA256), IJwtTokenGenerator, IPasswordHasher, and ITokenRevocationService.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'AddStangaNetLibAuth0', signature: 'public static IServiceCollection AddStangaNetLibAuth0( this IServiceCollection services, IConfiguration configuration)', summary: 'Registers JWT Bearer authentication delegated to Auth0 (RS256, JWKS endpoint), IPasswordHasher, and ITokenRevocationService.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'AddStangaNetLibAuth0ManagementService', signature: 'public static IServiceCollection AddStangaNetLibAuth0ManagementService( this IServiceCollection services, IConfiguration configuration, Action<IHttpClientBuilder>? configureHttpClient = null)', summary: 'Registers IAuth0ManagementService for interacting with the Auth0 Management API. Requires Auth0Settings.ManagementClientId and ManagementClientSecret. Can be called standalone or after AddStangaNetLibAuth0.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'The service collection to register into. Application configuration used to bind Auth0Settings. Optional callback to further configure the IHttpClientBuilder for the Auth0 management HttpClient. Use this hook to attach resilience handlers, delegating handlers, or logging. Example using Microsoft.Extensions.Http.Resilience (Polly 8): services.AddStangaNetLibAuth0ManagementService(config, b => b.AddResilienceHandler("Auth0", p => { p.AddRetry(new HttpRetryStrategyOptions { MaxRetryAttempts = 3 }); p.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions()); p.AddTimeout(TimeSpan.FromSeconds(10)); }));' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }, { name: 'configureHttpClient', type: 'Action<IHttpClientBuilder>?', description: 'configureHttpClient', optional: true }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'AddStangaNetLibAuthInMemoryTokenStore', signature: 'public static IServiceCollection AddStangaNetLibAuthInMemoryTokenStore( this IServiceCollection services)', summary: 'Registers InMemoryRefreshTokenRepository as IRefreshTokenRepository. Use only for development and testing — data is not persisted across restarts.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }], returns: 'IServiceCollection', isStatic: true },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Auth.Middleware',
+      summary: 'Types in StangaNetLib.Auth.Middleware.',
+      types: [
+        {
+          slug: 'token-revocation-middleware',
+          name: 'TokenRevocationMiddleware',
+          displayName: 'TokenRevocationMiddleware',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Middleware',
+          summary: 'Checks each incoming Bearer token against the revocation blacklist before passing the request downstream. Responds with 401 Unauthorized if the token\'s jti is found in the blacklist. Register via UseStangaNetLibAuth.',
+          signature: 'public sealed class TokenRevocationMiddleware',
+          methods: [
+            { name: 'InvokeAsync', signature: 'public async Task InvokeAsync(HttpContext context)', summary: 'InvokeAsync', parameters: [{ name: 'context', type: 'HttpContext', description: 'context' }], returns: 'Task', isAsync: true },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Auth.Models',
+      summary: 'Types in StangaNetLib.Auth.Models.',
+      types: [
+        {
+          slug: 'auth0-role-info',
+          name: 'Auth0RoleInfo',
+          displayName: 'Auth0RoleInfo',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Models',
+          summary: 'class Auth0RoleInfo.',
+          signature: 'public sealed class Auth0RoleInfo',
+          properties: [
+            { name: 'Id', type: 'string', access: 'get; init', summary: 'Id' },
+            { name: 'Name', type: 'string', access: 'get; init', summary: 'Name' },
+            { name: 'Description', type: 'string', access: 'get; init', summary: 'Description' },
+          ],
+        },
+        {
+          slug: 'auth0-user-info',
+          name: 'Auth0UserInfo',
+          displayName: 'Auth0UserInfo',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Models',
+          summary: 'class Auth0UserInfo.',
+          signature: 'public sealed class Auth0UserInfo',
+          properties: [
+            { name: 'UserId', type: 'string', access: 'get; init', summary: 'UserId' },
+            { name: 'Email', type: 'string', access: 'get; init', summary: 'Email' },
+            { name: 'EmailVerified', type: 'bool', access: 'get; init', summary: 'EmailVerified' },
+            { name: 'Blocked', type: 'bool', access: 'get; init', summary: 'Blocked' },
+            { name: 'CreatedAt', type: 'DateTime', access: 'get; init', summary: 'CreatedAt' },
+            { name: 'LastLogin', type: 'DateTime?', access: 'get; init', summary: 'LastLogin' },
+            { name: 'UserMetadata', type: 'IReadOnlyDictionary<string, object?>', access: 'get; init', summary: 'UserMetadata' },
+            { name: 'AppMetadata', type: 'IReadOnlyDictionary<string, object?>', access: 'get; init', summary: 'AppMetadata' },
+          ],
+        },
+        {
+          slug: 'jwt-claims',
+          name: 'JwtClaims',
+          displayName: 'JwtClaims',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Models',
+          summary: 'class JwtClaims.',
+          signature: 'public static class JwtClaims',
+          fields: [
+            { name: 'UserId', type: 'string', summary: 'UserId', value: '"sub"' },
+            { name: 'Email', type: 'string', summary: 'Email', value: '"email"' },
+            { name: 'Role', type: 'string', summary: 'Role', value: '"role"' },
+            { name: 'DeviceId', type: 'string', summary: 'DeviceId', value: '"device_id"' },
+            { name: 'TokenId', type: 'string', summary: 'TokenId', value: '"jti"' },
+          ],
+        },
+        {
+          slug: 'refresh-token',
+          name: 'RefreshToken',
+          displayName: 'RefreshToken',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Models',
+          summary: 'Represents a refresh token issued to a specific user device. Each device holds at most one active refresh token at a time — rotation replaces the previous one.',
+          signature: 'public sealed class RefreshToken',
+          properties: [
+            { name: 'Token', type: 'string', access: 'get; init', summary: 'Token' },
+            { name: 'UserId', type: 'string', access: 'get; init', summary: 'UserId' },
+            { name: 'Device', type: 'DeviceInfo', access: 'get; init', summary: 'Device' },
+            { name: 'ExpiresAt', type: 'DateTime', access: 'get; init', summary: 'ExpiresAt' },
+            { name: 'CreatedAt', type: 'DateTime', access: 'get; init', summary: 'CreatedAt' },
+            { name: 'IsRevoked', type: 'bool', access: 'get; set', summary: 'IsRevoked' },
+          ],
+          methods: [
+            { name: 'Revoke', signature: 'public void Revoke()', summary: 'Revoke' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Auth.Services',
+      summary: 'Types in StangaNetLib.Auth.Services.',
+      types: [
+        {
+          slug: 'in-memory-refresh-token-repository',
+          name: 'InMemoryRefreshTokenRepository',
+          displayName: 'InMemoryRefreshTokenRepository',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Services',
+          summary: 'Thread-safe in-memory implementation of IRefreshTokenRepository. For development and unit testing only — data is lost on process restart.',
+          signature: 'public sealed class InMemoryRefreshTokenRepository : IRefreshTokenRepository',
+          implements: ['IRefreshTokenRepository'],
+          methods: [
+            { name: 'GetAsync', signature: 'public Task<RefreshToken?> GetAsync(string token, CancellationToken ct = default)', summary: 'GetAsync', parameters: [{ name: 'token', type: 'string', description: 'token' }, { name: 'ct', type: 'CancellationToken', description: 'ct', optional: true }], returns: 'Task<RefreshToken?>', isAsync: true },
+            { name: 'GetByUserIdAsync', signature: 'public Task<IReadOnlyList<RefreshToken>> GetByUserIdAsync(string userId, CancellationToken ct = default)', summary: 'GetByUserIdAsync', parameters: [{ name: 'userId', type: 'string', description: 'userId' }, { name: 'ct', type: 'CancellationToken', description: 'ct', optional: true }], returns: 'Task<IReadOnlyList<RefreshToken>>', isAsync: true },
+            { name: 'SaveAsync', signature: 'public Task SaveAsync(RefreshToken refreshToken, CancellationToken ct = default)', summary: 'SaveAsync', parameters: [{ name: 'refreshToken', type: 'RefreshToken', description: 'refreshToken' }, { name: 'ct', type: 'CancellationToken', description: 'ct', optional: true }], returns: 'Task' },
+            { name: 'RevokeAsync', signature: 'public Task RevokeAsync(string token, CancellationToken ct = default)', summary: 'RevokeAsync', parameters: [{ name: 'token', type: 'string', description: 'token' }, { name: 'ct', type: 'CancellationToken', description: 'ct', optional: true }], returns: 'Task' },
+            { name: 'RevokeAllForUserAsync', signature: 'public Task RevokeAllForUserAsync(string userId, CancellationToken ct = default)', summary: 'RevokeAllForUserAsync', parameters: [{ name: 'userId', type: 'string', description: 'userId' }, { name: 'ct', type: 'CancellationToken', description: 'ct', optional: true }], returns: 'Task' },
+            { name: 'RevokeAllForDeviceAsync', signature: 'public Task RevokeAllForDeviceAsync(string userId, string deviceId, CancellationToken ct = default)', summary: 'RevokeAllForDeviceAsync', parameters: [{ name: 'userId', type: 'string', description: 'userId' }, { name: 'deviceId', type: 'string', description: 'deviceId' }, { name: 'ct', type: 'CancellationToken', description: 'ct', optional: true }], returns: 'Task' },
+            { name: 'DeleteExpiredAsync', signature: 'public Task DeleteExpiredAsync(CancellationToken ct = default)', summary: 'DeleteExpiredAsync', parameters: [{ name: 'ct', type: 'CancellationToken', description: 'ct', optional: true }], returns: 'Task' },
+          ],
+        },
+        {
+          slug: 'jwt-token-generator',
+          name: 'JwtTokenGenerator',
+          displayName: 'JwtTokenGenerator',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Services',
+          summary: 'HMAC-SHA256 JWT implementation of IJwtTokenGenerator. Signing credentials and validation parameters are computed once at construction time.',
+          signature: 'public sealed class JwtTokenGenerator : IJwtTokenGenerator',
+          implements: ['IJwtTokenGenerator'],
+          methods: [
+            { name: 'GenerateAccessToken', signature: 'public string GenerateAccessToken(string userId, string email, IEnumerable<string> roles, string deviceId)', summary: 'GenerateAccessToken', parameters: [{ name: 'userId', type: 'string', description: 'userId' }, { name: 'email', type: 'string', description: 'email' }, { name: 'roles', type: 'IEnumerable<string>', description: 'roles' }, { name: 'deviceId', type: 'string', description: 'deviceId' }], returns: 'string' },
+            { name: 'GenerateRefreshToken', signature: 'public string GenerateRefreshToken()', summary: 'GenerateRefreshToken', returns: 'string' },
+            { name: 'GetTokenId', signature: 'public string? GetTokenId(string accessToken)', summary: 'GetTokenId', parameters: [{ name: 'accessToken', type: 'string', description: 'accessToken' }], returns: 'string?' },
+            { name: 'ValidateToken', signature: 'public bool ValidateToken(string token, out string? tokenId)', summary: 'ValidateToken', parameters: [{ name: 'token', type: 'string', description: 'token' }, { name: 'tokenId', type: 'string?', description: 'tokenId' }], returns: 'bool' },
+          ],
+        },
+        {
+          slug: 'password-hasher',
+          name: 'PasswordHasher',
+          displayName: 'PasswordHasher',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Services',
+          summary: 'class PasswordHasher.',
+          signature: 'public sealed class PasswordHasher : IPasswordHasher',
+          implements: ['IPasswordHasher'],
+          methods: [
+            { name: 'Hash', signature: 'public string Hash(string password)', summary: 'Hash', parameters: [{ name: 'password', type: 'string', description: 'password' }], returns: 'string' },
+            { name: 'Verify', signature: 'public bool Verify(string password, string hash)', summary: 'Verify', parameters: [{ name: 'password', type: 'string', description: 'password' }, { name: 'hash', type: 'string', description: 'hash' }], returns: 'bool' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Auth.Settings',
+      summary: 'Types in StangaNetLib.Auth.Settings.',
+      types: [
+        {
+          slug: 'auth0-settings',
+          name: 'Auth0Settings',
+          displayName: 'Auth0Settings',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Settings',
+          summary: 'class Auth0Settings.',
+          signature: 'public sealed class Auth0Settings',
+          properties: [
+            { name: 'Domain', type: 'string', access: 'get; init', summary: 'Domain' },
+            { name: 'Audience', type: 'string', access: 'get; init', summary: 'Audience' },
+            { name: 'ManagementClientId', type: 'string', access: 'get; init', summary: 'ManagementClientId' },
+            { name: 'ManagementClientSecret', type: 'string', access: 'get; init', summary: 'ManagementClientSecret' },
+          ],
+          fields: [
+            { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"Auth0Settings"' },
+          ],
+        },
+        {
+          slug: 'jwt-settings',
+          name: 'JwtSettings',
+          displayName: 'JwtSettings',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Settings',
+          summary: 'class JwtSettings.',
+          signature: 'public sealed class JwtSettings',
+          properties: [
+            { name: 'Secret', type: 'string', access: 'get; init', summary: 'Secret' },
+            { name: 'Issuer', type: 'string', access: 'get; init', summary: 'Issuer' },
+            { name: 'Audience', type: 'string', access: 'get; init', summary: 'Audience' },
+            { name: 'AccessTokenExpiryMinutes', type: 'int', access: 'get; init', summary: 'AccessTokenExpiryMinutes' },
+            { name: 'RefreshTokenExpiryDays', type: 'int', access: 'get; init', summary: 'RefreshTokenExpiryDays' },
+          ],
+          fields: [
+            { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"JwtSettings"' },
+          ],
+        }
+      ],
+    }
+  ],
+};

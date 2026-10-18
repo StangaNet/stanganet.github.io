@@ -1,0 +1,550 @@
+import type { LibraryDoc } from '../types';
+
+export const gdprLibrary: LibraryDoc = {
+  slug: 'gdpr',
+  name: 'StangaNetLib.Gdpr',
+  version: '1.0.0',
+  targetFrameworks: ['net8.0', 'net9.0'],
+  tagline: 'Consent, DSAR, and pseudonymization for GDPR compliance',
+  description:
+    'GDPR-oriented services: consent repositories, DSAR lifecycle, pseudonymization, and endpoint consent enforcement.',
+  repository: 'https://github.com/StangaNet/StangaNetLib.Gdpr',
+  namespaces: [
+    {
+      name: 'StangaNetLib.Gdpr.Audit.Abstractions',
+      summary: 'Types in StangaNetLib.Gdpr.Audit.Abstractions.',
+      types: [
+        {
+          slug: 'i-data-breach-service',
+          name: 'IDataBreachService',
+          displayName: 'IDataBreachService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Gdpr.Audit.Abstractions',
+          summary: 'Manages the personal data breach notification lifecycle (GDPR Art. 33/34). Art. 33: medium/high-severity breaches must be reported to the supervisory authority within 72 hours of discovery. Art. 34: high-severity breaches must also be communicated directly to affected data subjects without undue delay. Art. 33(5): all breaches must be documented internally regardless of severity. The consuming project provides the persistence implementation.',
+          signature: 'public interface IDataBreachService',
+        },
+        {
+          slug: 'i-processing-activity-registry',
+          name: 'IProcessingActivityRegistry',
+          displayName: 'IProcessingActivityRegistry',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Gdpr.Audit.Abstractions',
+          summary: 'Maintains the Record of Processing Activities (RoPA) required by GDPR Art. 30. Controllers with ≥ 250 employees, or whose processing is likely to result in a risk to data subjects\' rights, must maintain this register and make it available to the supervisory authority on request. The consuming project provides the persistence implementation.',
+          signature: 'public interface IProcessingActivityRegistry',
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Audit.Models',
+      summary: 'Types in StangaNetLib.Gdpr.Audit.Models.',
+      types: [
+        {
+          slug: 'data-breach-record',
+          name: 'DataBreachRecord',
+          displayName: 'DataBreachRecord',
+          kind: 'record',
+          namespace: 'StangaNetLib.Gdpr.Audit.Models',
+          summary: 'Tracks a personal data breach from discovery through notification (GDPR Art. 33/34). Art. 33: medium/high-severity breaches must be reported to the supervisory authority within 72 hours of discovery. Art. 34: high-severity breaches must also be communicated directly to affected data subjects without undue delay. All breaches must be documented internally regardless of severity (Art. 33(5)).',
+          signature: 'public sealed record DataBreachRecord',
+          properties: [
+            { name: 'Id', type: 'Guid', access: 'get; init', summary: 'Id' },
+            { name: 'DetectedAt', type: 'DateTimeOffset', access: 'get; init', summary: 'DetectedAt' },
+            { name: 'NotificationDeadlineAt', type: 'DateTimeOffset', access: 'get; init', summary: 'NotificationDeadlineAt' },
+            { name: 'Severity', type: 'DataBreachSeverity', access: 'get; init', summary: 'Severity' },
+            { name: 'Description', type: 'string', access: 'get; init', summary: 'Nature of the breach, categories and approximate number of data subjects and records affected (Art. 33(3)(a)).' },
+            { name: 'DataCategories', type: 'IReadOnlyList<string>', access: 'get; init', summary: 'DataCategories' },
+            { name: 'AffectedSubjectsCount', type: 'int', access: 'get; init', summary: 'AffectedSubjectsCount' },
+            { name: 'RemediationMeasures', type: 'string?', access: 'get; init', summary: 'RemediationMeasures' },
+            { name: 'AuthorityNotifiedAt', type: 'DateTimeOffset?', access: 'get; init', summary: 'AuthorityNotifiedAt' },
+            { name: 'SubjectsNotifiedAt', type: 'DateTimeOffset?', access: 'get; init', summary: 'SubjectsNotifiedAt' },
+          ],
+        },
+        {
+          slug: 'data-breach-severity',
+          name: 'DataBreachSeverity',
+          displayName: 'DataBreachSeverity',
+          kind: 'enum',
+          namespace: 'StangaNetLib.Gdpr.Audit.Models',
+          summary: 'Risk-based severity classification for personal data breaches under GDPR Art. 33/34. Determines which notification obligations apply.',
+          signature: 'public enum DataBreachSeverity',
+          enumValues: [
+            { name: 'Low', value: 1, summary: 'Low' },
+            { name: 'Medium', value: 2, summary: 'Medium' },
+            { name: 'High', value: 3, summary: 'High' },
+          ],
+        },
+        {
+          slug: 'processing-activity',
+          name: 'ProcessingActivity',
+          displayName: 'ProcessingActivity',
+          kind: 'record',
+          namespace: 'StangaNetLib.Gdpr.Audit.Models',
+          summary: 'An entry in the Record of Processing Activities (RoPA) maintained under GDPR Art. 30. Controllers with ≥ 250 employees, or whose processing is likely to result in a risk to data subjects\' rights, are legally required to maintain this register and make it available to the supervisory authority on request.',
+          signature: 'public sealed record ProcessingActivity',
+          properties: [
+            { name: 'Id', type: 'Guid', access: 'get; init', summary: 'Id' },
+            { name: 'Name', type: 'string', access: 'get; init', summary: 'Name' },
+            { name: 'Purpose', type: 'string', access: 'get; init', summary: 'Purpose' },
+            { name: 'LawfulBasis', type: 'LawfulBasis', access: 'get; init', summary: 'LawfulBasis' },
+            { name: 'DataSubjectCategories', type: 'IReadOnlyList<string>', access: 'get; init', summary: 'DataSubjectCategories' },
+            { name: 'DataCategories', type: 'IReadOnlyList<string>', access: 'get; init', summary: 'DataCategories' },
+            { name: 'Recipients', type: 'IReadOnlyList<string>', access: 'get; init', summary: 'Recipients' },
+            { name: 'ThirdCountryTransfers', type: 'string?', access: 'get; init', summary: 'Third-country transfers and the safeguards applied (Art. 30(1)(e), Art. 46/49). Null if no transfers outside the EEA take place.' },
+            { name: 'RetentionPolicy', type: 'string', access: 'get; init', summary: 'RetentionPolicy' },
+            { name: 'SecurityMeasures', type: 'string?', access: 'get; init', summary: 'SecurityMeasures' },
+            { name: 'CreatedAt', type: 'DateTimeOffset', access: 'get; init', summary: 'CreatedAt' },
+            { name: 'UpdatedAt', type: 'DateTimeOffset', access: 'get; init', summary: 'UpdatedAt' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Configuration',
+      summary: 'Types in StangaNetLib.Gdpr.Configuration.',
+      types: [
+        {
+          slug: 'data-retention-settings',
+          name: 'DataRetentionSettings',
+          displayName: 'DataRetentionSettings',
+          kind: 'class',
+          namespace: 'StangaNetLib.Gdpr.Configuration',
+          summary: 'Configures the data retention periods used by scheduled cleanup jobs. Bind from appsettings.json under the "DataRetentionSettings" section.',
+          signature: 'public sealed class DataRetentionSettings',
+          properties: [
+            { name: 'InactiveUserDays', type: 'int', access: 'get; set', summary: 'InactiveUserDays' },
+            { name: 'DeletedUserDays', type: 'int', access: 'get; set', summary: 'DeletedUserDays' },
+            { name: 'MessageDays', type: 'int', access: 'get; set', summary: 'MessageDays' },
+            { name: 'AuditLogDays', type: 'int', access: 'get; set', summary: 'AuditLogDays' },
+          ],
+          fields: [
+            { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"DataRetentionSettings"' },
+          ],
+        },
+        {
+          slug: 'gdpr-settings',
+          name: 'GdprSettings',
+          displayName: 'GdprSettings',
+          kind: 'class',
+          namespace: 'StangaNetLib.Gdpr.Configuration',
+          summary: 'Configuration options for StangaNetLib.Gdpr. Bind from appsettings.json under the "GdprSettings" section.',
+          signature: 'public sealed class GdprSettings',
+          properties: [
+            { name: 'DataControllerName', type: 'string', access: 'get; set', summary: 'DataControllerName' },
+            { name: 'DpoEmail', type: 'string', access: 'get; set', summary: 'DpoEmail' },
+            { name: 'SupervisoryAuthorityName', type: 'string', access: 'get; set', summary: 'Name of the supervisory authority relevant to the controller\'s jurisdiction. Default: "Garante per la protezione dei dati personali" (Italian authority).' },
+            { name: 'SupervisoryAuthorityUrl', type: 'string', access: 'get; set', summary: 'Website of the supervisory authority. Default: "https://www.garanteprivacy.it".' },
+            { name: 'PseudonymizationKey', type: 'string', access: 'get; set', summary: 'Base64-encoded 256-bit (32-byte) AES key used by PseudonymizationService. Required. Generate with: Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))' },
+          ],
+          fields: [
+            { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"GdprSettings"' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Consent.Abstractions',
+      summary: 'Types in StangaNetLib.Gdpr.Consent.Abstractions.',
+      types: [
+        {
+          slug: 'i-consent-repository',
+          name: 'IConsentRepository',
+          displayName: 'IConsentRepository',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Gdpr.Consent.Abstractions',
+          summary: 'CRUD contract for user consent records with full history. The consuming project provides an EF Core or other persistence implementation.',
+          signature: 'public interface IConsentRepository',
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Consent.Attributes',
+      summary: 'Types in StangaNetLib.Gdpr.Consent.Attributes.',
+      types: [
+        {
+          slug: 'require-consent-attribute',
+          name: 'RequireConsentAttribute',
+          displayName: 'RequireConsentAttribute',
+          kind: 'class',
+          namespace: 'StangaNetLib.Gdpr.Consent.Attributes',
+          summary: 'Marks an endpoint as requiring a specific user consent before access is granted. The ConsentValidationMiddleware reads this attribute at runtime.',
+          signature: 'public sealed class RequireConsentAttribute : Attribute',
+          inherits: 'Attribute',
+          properties: [
+            { name: 'ConsentType', type: 'string', access: 'get', summary: 'ConsentType' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Consent.Middleware',
+      summary: 'Types in StangaNetLib.Gdpr.Consent.Middleware.',
+      types: [
+        {
+          slug: 'consent-validation-middleware',
+          name: 'ConsentValidationMiddleware',
+          displayName: 'ConsentValidationMiddleware',
+          kind: 'class',
+          namespace: 'StangaNetLib.Gdpr.Consent.Middleware',
+          summary: 'Checks that the authenticated user has granted all consent types declared via RequireConsentAttribute on the matched endpoint. Anonymous requests and endpoints without the attribute are passed through unchanged. Returns HTTP 403 with a JSON error body when a required consent is missing or revoked.',
+          signature: 'public sealed class ConsentValidationMiddleware',
+          methods: [
+            { name: 'InvokeAsync', signature: 'public async Task InvokeAsync(HttpContext context)', summary: 'InvokeAsync', parameters: [{ name: 'context', type: 'HttpContext', description: 'context' }], returns: 'Task', isAsync: true },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Consent.Models',
+      summary: 'Types in StangaNetLib.Gdpr.Consent.Models.',
+      types: [
+        {
+          slug: 'consent-record',
+          name: 'ConsentRecord',
+          displayName: 'ConsentRecord',
+          kind: 'record',
+          namespace: 'StangaNetLib.Gdpr.Consent.Models',
+          summary: 'Immutable record of a user\'s consent decision. Each grant or revocation creates a new record; the full history is preserved.',
+          signature: 'public sealed record ConsentRecord',
+          properties: [
+            { name: 'Id', type: 'Guid', access: 'get; init', summary: 'Id' },
+            { name: 'UserId', type: 'string', access: 'get; init', summary: 'UserId' },
+            { name: 'ConsentType', type: 'string', access: 'get; init', summary: 'ConsentType' },
+            { name: 'IsGranted', type: 'bool', access: 'get; init', summary: 'IsGranted' },
+            { name: 'GrantedAt', type: 'DateTimeOffset', access: 'get; init', summary: 'GrantedAt' },
+            { name: 'RevokedAt', type: 'DateTimeOffset?', access: 'get; init', summary: 'RevokedAt' },
+            { name: 'IpAddress', type: 'string?', access: 'get; init', summary: 'IpAddress' },
+            { name: 'UserAgent', type: 'string?', access: 'get; init', summary: 'UserAgent' },
+            { name: 'PolicyVersion', type: 'string', access: 'get; init', summary: 'PolicyVersion' },
+            { name: 'LawfulBasis', type: 'LawfulBasis', access: 'get; init', summary: 'Lawful basis under Art. 6 on which this processing relies. For most consent records this will be Consent; other bases apply when consent is collected alongside a different legal ground (e.g. Contract for essential service communications).' },
+          ],
+        },
+        {
+          slug: 'lawful-basis',
+          name: 'LawfulBasis',
+          displayName: 'LawfulBasis',
+          kind: 'enum',
+          namespace: 'StangaNetLib.Gdpr.Consent.Models',
+          summary: 'The six lawful bases for processing personal data under GDPR Art. 6. At least one must apply for every processing activity; the basis must be documented in the Record of Processing Activities (Art. 30).',
+          signature: 'public enum LawfulBasis',
+          enumValues: [
+            { name: 'Consent', value: 1, summary: 'Consent' },
+            { name: 'Contract', value: 2, summary: 'Contract' },
+            { name: 'LegalObligation', value: 3, summary: 'LegalObligation' },
+            { name: 'VitalInterests', value: 4, summary: 'VitalInterests' },
+            { name: 'PublicTask', value: 5, summary: 'PublicTask' },
+            { name: 'LegitimateInterests', value: 6, summary: 'LegitimateInterests' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Dsar.Abstractions',
+      summary: 'Types in StangaNetLib.Gdpr.Dsar.Abstractions.',
+      types: [
+        {
+          slug: 'i-data-deletion-service',
+          name: 'IDataDeletionService',
+          displayName: 'IDataDeletionService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Gdpr.Dsar.Abstractions',
+          summary: 'Handles the GDPR right to erasure (Art. 17). The consuming project implements this interface based on its own data model.',
+          signature: 'public interface IDataDeletionService',
+        },
+        {
+          slug: 'i-data-export-service',
+          name: 'IDataExportService',
+          displayName: 'IDataExportService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Gdpr.Dsar.Abstractions',
+          summary: 'Exports all personal data held for a user (GDPR Art. 15 — Right of Access / Art. 20 — Right to Data Portability). The consuming project implements this interface by querying its own data model.',
+          signature: 'public interface IDataExportService',
+        },
+        {
+          slug: 'i-dsar-service',
+          name: 'IDsarService',
+          displayName: 'IDsarService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Gdpr.Dsar.Abstractions',
+          summary: 'Manages the full lifecycle of Data Subject Access Requests (DSARs). Enforces the one-month response deadline mandated by GDPR Art. 12(3), extendable by two additional months for complex or numerous requests. The consuming project provides the persistence implementation.',
+          signature: 'public interface IDsarService',
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Dsar.Models',
+      summary: 'Types in StangaNetLib.Gdpr.Dsar.Models.',
+      types: [
+        {
+          slug: 'data-export-result',
+          name: 'DataExportResult',
+          displayName: 'DataExportResult',
+          kind: 'record',
+          namespace: 'StangaNetLib.Gdpr.Dsar.Models',
+          summary: 'Result of a user data export (GDPR Art. 15 — Right of Access / Art. 20 — Right to Data Portability). Art. 20 requires that data provided for portability is in a structured, commonly used, machine-readable format that allows the data subject to transmit it to another controller.',
+          signature: 'public sealed record DataExportResult',
+          properties: [
+            { name: 'UserId', type: 'string', access: 'get; init', summary: 'UserId' },
+            { name: 'ExportedAt', type: 'DateTimeOffset', access: 'get; init', summary: 'ExportedAt' },
+            { name: 'JsonContent', type: 'string', access: 'get; init', summary: 'UTF-8 JSON string containing all personal data organized by category. The consuming project\'s IDataExportService implementation is responsible for populating this field with data from every table that holds user-attributable records.' },
+            { name: 'ContentType', type: 'string', access: 'get; init', summary: 'MIME type of JsonContent. Default: application/json. Set to text/csv or another structured format when the consumer produces a different machine-readable output for Art. 20 portability requests.' },
+            { name: 'IsPortabilityRequest', type: 'bool', access: 'get; init', summary: 'Indicates whether this export fulfils the Art. 20 data-portability right (i.e. data provided by the subject, processed by automated means under consent or contract). When true, the response should be delivered in a portable, interoperable format.' },
+          ],
+        },
+        {
+          slug: 'dsar-record',
+          name: 'DsarRecord',
+          displayName: 'DsarRecord',
+          kind: 'record',
+          namespace: 'StangaNetLib.Gdpr.Dsar.Models',
+          summary: 'Tracks a Data Subject Access Request (DSAR) throughout its full lifecycle. GDPR Art. 12(3) requires response within one calendar month of receipt, extendable by two months for complex or numerous requests (Art. 12(3)).',
+          signature: 'public sealed record DsarRecord',
+          properties: [
+            { name: 'Id', type: 'Guid', access: 'get; init', summary: 'Id' },
+            { name: 'UserId', type: 'string', access: 'get; init', summary: 'UserId' },
+            { name: 'Type', type: 'DsarType', access: 'get; init', summary: 'Type' },
+            { name: 'Status', type: 'DsarStatus', access: 'get; init', summary: 'Status' },
+            { name: 'ReceivedAt', type: 'DateTimeOffset', access: 'get; init', summary: 'ReceivedAt' },
+            { name: 'DeadlineAt', type: 'DateTimeOffset', access: 'get; init', summary: 'Statutory deadline: one calendar month from ReceivedAt (Art. 12(3)). Extended to three months when Status is Extended.' },
+            { name: 'ResolvedAt', type: 'DateTimeOffset?', access: 'get; init', summary: 'ResolvedAt' },
+            { name: 'RequestDetails', type: 'string?', access: 'get; init', summary: 'RequestDetails' },
+            { name: 'InternalNotes', type: 'string?', access: 'get; init', summary: 'InternalNotes' },
+            { name: 'Reason', type: 'string?', access: 'get; init', summary: 'Reason communicated to the data subject when Status is Rejected or Extended.' },
+            { name: 'IpAddress', type: 'string?', access: 'get; init', summary: 'IpAddress' },
+          ],
+        },
+        {
+          slug: 'dsar-status',
+          name: 'DsarStatus',
+          displayName: 'DsarStatus',
+          kind: 'enum',
+          namespace: 'StangaNetLib.Gdpr.Dsar.Models',
+          summary: 'enum DsarStatus.',
+          signature: 'public enum DsarStatus',
+          enumValues: [
+            { name: 'Pending', value: 1, summary: 'Pending' },
+            { name: 'InProgress', value: 2, summary: 'InProgress' },
+            { name: 'Completed', value: 3, summary: 'Completed' },
+            { name: 'Rejected', value: 4, summary: 'Rejected' },
+            { name: 'Extended', value: 5, summary: 'Extended' },
+          ],
+        },
+        {
+          slug: 'dsar-type',
+          name: 'DsarType',
+          displayName: 'DsarType',
+          kind: 'enum',
+          namespace: 'StangaNetLib.Gdpr.Dsar.Models',
+          summary: 'enum DsarType.',
+          signature: 'public enum DsarType',
+          enumValues: [
+            { name: 'Access', value: 1, summary: 'Access' },
+            { name: 'Rectification', value: 2, summary: 'Rectification' },
+            { name: 'Erasure', value: 3, summary: 'Erasure' },
+            { name: 'RestrictionOfProcessing', value: 4, summary: 'RestrictionOfProcessing' },
+            { name: 'DataPortability', value: 5, summary: 'DataPortability' },
+            { name: 'Objection', value: 6, summary: 'Objection' },
+            { name: 'AutomatedDecision', value: 7, summary: 'AutomatedDecision' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Infrastructure.Extensions',
+      summary: 'Types in StangaNetLib.Gdpr.Infrastructure.Extensions.',
+      types: [
+        {
+          slug: 'application-builder-extensions',
+          name: 'ApplicationBuilderExtensions',
+          displayName: 'ApplicationBuilderExtensions',
+          kind: 'class',
+          namespace: 'StangaNetLib.Gdpr.Infrastructure.Extensions',
+          summary: 'Extension methods for IApplicationBuilder that add StangaNetLib.Gdpr middleware to the pipeline.',
+          signature: 'public static class ApplicationBuilderExtensions',
+          methods: [
+            { name: 'UseStangaNetLibGdpr', signature: 'public static IApplicationBuilder UseStangaNetLibGdpr(this IApplicationBuilder app)', summary: 'Adds ConsentValidationMiddleware to the pipeline. Enforces RequireConsentAttribute on matched endpoints, returning HTTP 403 when the authenticated user has not granted the required consent.', parameters: [{ name: 'app', type: 'IApplicationBuilder', description: 'app' }], returns: 'IApplicationBuilder', isStatic: true },
+            { name: 'UseStangaNetLibGdprRestrictions', signature: 'public static IApplicationBuilder UseStangaNetLibGdprRestrictions(this IApplicationBuilder app)', summary: 'Adds ProcessingRestrictionMiddleware to the pipeline. Enforces RequireNoRestrictionAttribute on matched endpoints, returning HTTP 451 when the authenticated user has an active processing restriction (Art. 18).', parameters: [{ name: 'app', type: 'IApplicationBuilder', description: 'app' }], returns: 'IApplicationBuilder', isStatic: true },
+          ],
+        },
+        {
+          slug: 'service-collection-extensions',
+          name: 'ServiceCollectionExtensions',
+          displayName: 'ServiceCollectionExtensions',
+          kind: 'class',
+          namespace: 'StangaNetLib.Gdpr.Infrastructure.Extensions',
+          summary: 'Extension methods for IServiceCollection that register StangaNetLib.Gdpr services.',
+          signature: 'public static class ServiceCollectionExtensions',
+          methods: [
+            { name: 'AddStangaNetLibGdpr', signature: 'public static IServiceCollection AddStangaNetLibGdpr( this IServiceCollection services, IConfiguration configuration)', summary: 'Registers all StangaNetLib.Gdpr services: IPseudonymizationService (singleton), GdprSettings, and DataRetentionSettings.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Objection.Abstractions',
+      summary: 'Types in StangaNetLib.Gdpr.Objection.Abstractions.',
+      types: [
+        {
+          slug: 'i-data-processing-objection-service',
+          name: 'IDataProcessingObjectionService',
+          displayName: 'IDataProcessingObjectionService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Gdpr.Objection.Abstractions',
+          summary: 'Manages objections to the processing of personal data (GDPR Art. 21). Objections to direct marketing (Art. 21(2)) are absolute: the controller must cease processing immediately and may not override them. Objections to other processing (Art. 21(1)) may be overridden only if the controller can demonstrate compelling legitimate grounds that override the data subject\'s interests. The consuming project provides the persistence implementation.',
+          signature: 'public interface IDataProcessingObjectionService',
+        },
+        {
+          slug: 'i-data-rectification-service',
+          name: 'IDataRectificationService',
+          displayName: 'IDataRectificationService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Gdpr.Objection.Abstractions',
+          summary: 'Tracks and fulfils requests to correct inaccurate or complete incomplete personal data (GDPR Art. 16). The controller must act without undue delay; the one-month deadline under Art. 12(3) applies. The consuming project provides the persistence implementation.',
+          signature: 'public interface IDataRectificationService',
+        },
+        {
+          slug: 'i-processing-restriction-service',
+          name: 'IProcessingRestrictionService',
+          displayName: 'IProcessingRestrictionService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Gdpr.Objection.Abstractions',
+          summary: 'Manages restrictions on processing a user\'s personal data (GDPR Art. 18). While a restriction is active, the controller may only store the data; all other processing requires the data subject\'s explicit consent or specific legal grounds (Art. 18(2)). The data subject must be informed before any restriction is lifted (Art. 18(3)). The consuming project provides the persistence implementation.',
+          signature: 'public interface IProcessingRestrictionService',
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Objection.Attributes',
+      summary: 'Types in StangaNetLib.Gdpr.Objection.Attributes.',
+      types: [
+        {
+          slug: 'require-no-restriction-attribute',
+          name: 'RequireNoRestrictionAttribute',
+          displayName: 'RequireNoRestrictionAttribute',
+          kind: 'class',
+          namespace: 'StangaNetLib.Gdpr.Objection.Attributes',
+          summary: 'Marks an endpoint as requiring that the authenticated user does not have an active processing restriction (GDPR Art. 18) for the given scope. The ProcessingRestrictionMiddleware enforces this at runtime, returning HTTP 451 when a restriction is active.',
+          signature: 'public sealed class RequireNoRestrictionAttribute : Attribute',
+          inherits: 'Attribute',
+          properties: [
+            { name: 'Scope', type: 'string', access: 'get', summary: 'The processing scope to check. Default: "*" (any active restriction blocks access). Must match the Scope used when the restriction was imposed.' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Objection.Middleware',
+      summary: 'Types in StangaNetLib.Gdpr.Objection.Middleware.',
+      types: [
+        {
+          slug: 'processing-restriction-middleware',
+          name: 'ProcessingRestrictionMiddleware',
+          displayName: 'ProcessingRestrictionMiddleware',
+          kind: 'class',
+          namespace: 'StangaNetLib.Gdpr.Objection.Middleware',
+          summary: 'Blocks access for authenticated users who have an active processing restriction (GDPR Art. 18) on endpoints decorated with RequireNoRestrictionAttribute. Returns HTTP 451 (Unavailable For Legal Reasons) when a restriction is active. Anonymous requests and endpoints without the attribute are passed through unchanged.',
+          signature: 'public sealed class ProcessingRestrictionMiddleware',
+          methods: [
+            { name: 'InvokeAsync', signature: 'public async Task InvokeAsync(HttpContext context)', summary: 'InvokeAsync', parameters: [{ name: 'context', type: 'HttpContext', description: 'context' }], returns: 'Task', isAsync: true },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Objection.Models',
+      summary: 'Types in StangaNetLib.Gdpr.Objection.Models.',
+      types: [
+        {
+          slug: 'data-processing-objection',
+          name: 'DataProcessingObjection',
+          displayName: 'DataProcessingObjection',
+          kind: 'record',
+          namespace: 'StangaNetLib.Gdpr.Objection.Models',
+          summary: 'Records a data subject\'s objection to processing of their personal data (GDPR Art. 21). Objections to direct marketing (Art. 21(2)) are absolute and must always be upheld. Objections to other processing may be overridden only if the controller demonstrates compelling legitimate grounds that override the data subject\'s interests (Art. 21(1)).',
+          signature: 'public sealed record DataProcessingObjection',
+          properties: [
+            { name: 'Id', type: 'Guid', access: 'get; init', summary: 'Id' },
+            { name: 'UserId', type: 'string', access: 'get; init', summary: 'UserId' },
+            { name: 'ProcessingPurpose', type: 'string', access: 'get; init', summary: 'ProcessingPurpose' },
+            { name: 'Grounds', type: 'string?', access: 'get; init', summary: 'Grounds' },
+            { name: 'IsDirectMarketing', type: 'bool', access: 'get; init', summary: 'Whether the objection concerns direct marketing. When true, the right is absolute (Art. 21(2)) — OverriddenAt must never be set.' },
+            { name: 'ObjectedAt', type: 'DateTimeOffset', access: 'get; init', summary: 'ObjectedAt' },
+            { name: 'UpheldAt', type: 'DateTimeOffset?', access: 'get; init', summary: 'UpheldAt' },
+            { name: 'OverriddenAt', type: 'DateTimeOffset?', access: 'get; init', summary: 'Set if a non-marketing objection was overridden by compelling legitimate grounds (Art. 21(1)). Must never be set when IsDirectMarketing is true.' },
+            { name: 'OverrideReason', type: 'string?', access: 'get; init', summary: 'OverrideReason' },
+          ],
+        },
+        {
+          slug: 'processing-restriction',
+          name: 'ProcessingRestriction',
+          displayName: 'ProcessingRestriction',
+          kind: 'record',
+          namespace: 'StangaNetLib.Gdpr.Objection.Models',
+          summary: 'Records an active restriction on processing a user\'s personal data (GDPR Art. 18). While the restriction is active the controller may only store the data; all other processing requires the data subject\'s explicit consent or specific legal grounds (Art. 18(2)). The data subject must be informed before the restriction is lifted (Art. 18(3)).',
+          signature: 'public sealed record ProcessingRestriction',
+          properties: [
+            { name: 'Id', type: 'Guid', access: 'get; init', summary: 'Id' },
+            { name: 'UserId', type: 'string', access: 'get; init', summary: 'UserId' },
+            { name: 'Reason', type: 'string', access: 'get; init', summary: 'Art. 18(1) ground that triggered the restriction (e.g. "Accuracy contested", "Unlawful processing — erasure opposed", "Legal claims pending").' },
+            { name: 'Scope', type: 'string', access: 'get; init', summary: 'Processing scope covered by this restriction (e.g. "MarketingEmails", "Profiling"). Use "*" to restrict all processing.' },
+            { name: 'CreatedAt', type: 'DateTimeOffset', access: 'get; init', summary: 'CreatedAt' },
+            { name: 'LiftedAt', type: 'DateTimeOffset?', access: 'get; init', summary: 'LiftedAt' },
+          ],
+        },
+        {
+          slug: 'rectification-request',
+          name: 'RectificationRequest',
+          displayName: 'RectificationRequest',
+          kind: 'record',
+          namespace: 'StangaNetLib.Gdpr.Objection.Models',
+          summary: 'Tracks a request to correct inaccurate or complete incomplete personal data (GDPR Art. 16). The controller must act without undue delay. The one-month response deadline under Art. 12(3) applies.',
+          signature: 'public sealed record RectificationRequest',
+          properties: [
+            { name: 'Id', type: 'Guid', access: 'get; init', summary: 'Id' },
+            { name: 'UserId', type: 'string', access: 'get; init', summary: 'UserId' },
+            { name: 'Field', type: 'string', access: 'get; init', summary: 'Field' },
+            { name: 'RequestedChange', type: 'string', access: 'get; init', summary: 'RequestedChange' },
+            { name: 'RequestedAt', type: 'DateTimeOffset', access: 'get; init', summary: 'RequestedAt' },
+            { name: 'CompletedAt', type: 'DateTimeOffset?', access: 'get; init', summary: 'CompletedAt' },
+            { name: 'InternalNotes', type: 'string?', access: 'get; init', summary: 'InternalNotes' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Pseudonymization',
+      summary: 'Types in StangaNetLib.Gdpr.Pseudonymization.',
+      types: [
+        {
+          slug: 'pseudonymization-service',
+          name: 'PseudonymizationService',
+          displayName: 'PseudonymizationService',
+          kind: 'class',
+          namespace: 'StangaNetLib.Gdpr.Pseudonymization',
+          summary: 'AES-256-GCM pseudonymization and SHA-256 anonymization service.',
+          signature: 'public sealed class PseudonymizationService : IPseudonymizationService',
+          implements: ['IPseudonymizationService'],
+          methods: [
+            { name: 'Encrypt', signature: 'public string Encrypt(string plaintext)', summary: 'Encrypt', parameters: [{ name: 'plaintext', type: 'string', description: 'plaintext' }], returns: 'string' },
+            { name: 'Decrypt', signature: 'public string Decrypt(string ciphertext)', summary: 'Decrypt', parameters: [{ name: 'ciphertext', type: 'string', description: 'ciphertext' }], returns: 'string' },
+            { name: 'Anonymize', signature: 'public string Anonymize(string value)', summary: 'Anonymize', parameters: [{ name: 'value', type: 'string', description: 'value' }], returns: 'string' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Gdpr.Pseudonymization.Abstractions',
+      summary: 'Types in StangaNetLib.Gdpr.Pseudonymization.Abstractions.',
+      types: [
+        {
+          slug: 'i-pseudonymization-service',
+          name: 'IPseudonymizationService',
+          displayName: 'IPseudonymizationService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Gdpr.Pseudonymization.Abstractions',
+          summary: 'Cryptographic service for GDPR pseudonymization (reversible) and anonymization (irreversible).',
+          signature: 'public interface IPseudonymizationService',
+        }
+      ],
+    }
+  ],
+};

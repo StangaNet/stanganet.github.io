@@ -1,0 +1,285 @@
+import type { LibraryDoc } from '../types';
+
+export const tenancyLibrary: LibraryDoc = {
+  slug: 'tenancy',
+  name: 'StangaNetLib.Tenancy',
+  version: '1.0.0',
+  targetFrameworks: ['net8.0', 'net9.0'],
+  tagline: 'Multi-tenant context and resolution',
+  description:
+    'Tenant identification, context accessors, and resolution strategies for multi-tenant applications.',
+  repository: 'https://github.com/StangaNet/StangaNetLib.Tenancy',
+  namespaces: [
+    {
+      name: 'StangaNetLib.Tenancy.Abstractions',
+      summary: 'Types in StangaNetLib.Tenancy.Abstractions.',
+      types: [
+        {
+          slug: 'i-caching-tenant-store',
+          name: 'ICachingTenantStore',
+          displayName: 'ICachingTenantStore',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Tenancy.Abstractions',
+          summary: 'Extends ITenantStore with explicit cache-invalidation operations. Cast ITenantStore to this interface — or inject it directly — when you need to evict a specific tenant entry after a data change (status update, rename, deletion).',
+          signature: 'public interface ICachingTenantStore : ITenantStore',
+          implements: ['ITenantStore'],
+        },
+        {
+          slug: 'i-tenant-accessor',
+          name: 'ITenantAccessor',
+          displayName: 'ITenantAccessor',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Tenancy.Abstractions',
+          summary: 'Provides ambient read/write access to the current tenant outside the HTTP pipeline. Backed by AsyncLocal{T} so the value flows automatically through async continuations.',
+          signature: 'public interface ITenantAccessor',
+        },
+        {
+          slug: 'i-tenant-context',
+          name: 'ITenantContext',
+          displayName: 'ITenantContext',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Tenancy.Abstractions',
+          summary: 'Provides read-only access to the current tenant for the duration of an HTTP request. Resolved by TenantResolutionMiddleware and available via DI as a scoped service.',
+          signature: 'public interface ITenantContext',
+        },
+        {
+          slug: 'i-tenant-resolver',
+          name: 'ITenantResolver',
+          displayName: 'ITenantResolver',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Tenancy.Abstractions',
+          summary: 'Extracts a raw tenant key (ID or slug) from an incoming HTTP request. Multiple implementations can be registered; the middleware runs them in the order configured in ResolverOrder.',
+          signature: 'public interface ITenantResolver',
+        },
+        {
+          slug: 'i-tenant-store',
+          name: 'ITenantStore',
+          displayName: 'ITenantStore',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Tenancy.Abstractions',
+          summary: 'Retrieves tenant data by ID or slug. Consuming projects provide the concrete implementation (e.g. EF Core).',
+          signature: 'public interface ITenantStore',
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Tenancy.Extensions',
+      summary: 'Types in StangaNetLib.Tenancy.Extensions.',
+      types: [
+        {
+          slug: 'service-collection-extensions',
+          name: 'ServiceCollectionExtensions',
+          displayName: 'ServiceCollectionExtensions',
+          kind: 'class',
+          namespace: 'StangaNetLib.Tenancy.Extensions',
+          summary: 'class ServiceCollectionExtensions.',
+          signature: 'public static class ServiceCollectionExtensions',
+          methods: [
+            { name: 'AddStangaNetLibTenancy', signature: 'public static IServiceCollection AddStangaNetLibTenancy( this IServiceCollection services, IConfiguration configuration)', summary: 'Registers the tenant resolution pipeline: settings, all built-in ITenantResolver implementations, the scoped ITenantContext, and the singleton ITenantAccessor.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'AddStangaNetLibTenancy', signature: 'public static IServiceCollection AddStangaNetLibTenancy( this IServiceCollection services, Action<TenancySettings> configure)', summary: 'Registers the tenant resolution pipeline using an inline configuration delegate. Registers the same services as AddStangaNetLibTenancy(IServiceCollection,IConfiguration); useful in tests and minimal setups where appsettings.json is not available.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configure', type: 'Action<TenancySettings>', description: 'configure' }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'UseStangaNetLibTenancy', signature: 'public static IApplicationBuilder UseStangaNetLibTenancy(this IApplicationBuilder app)', summary: 'Adds TenantResolutionMiddleware to the request pipeline. Must be called after UseAuthentication() when the Claim resolver is in use.', parameters: [{ name: 'app', type: 'IApplicationBuilder', description: 'app' }], returns: 'IApplicationBuilder', isStatic: true },
+            { name: 'AddStangaNetLibTenancyCache', signature: 'public static IServiceCollection AddStangaNetLibTenancyCache<TStore>( this IServiceCollection services, TimeSpan? cacheTtl = null)', summary: 'Registers a CachingTenantStoreDecorator as both ITenantStore and ICachingTenantStore, wrapping TStore with an in-memory cache layer. Call this instead of manually registering ITenantStore when caching is desired. Injecting ICachingTenantStore gives access to explicit cache-invalidation methods.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'The service collection to register into. How long successful lookups are cached. Priority order: this parameter → CacheTtl → 5-minute built-in default. Must be positive when specified.' }, { name: 'cacheTtl', type: 'TimeSpan?', description: 'cacheTtl', optional: true }], returns: 'IServiceCollection', isStatic: true },
+          ],
+        },
+        {
+          slug: 'tenant-accessor-extensions',
+          name: 'TenantAccessorExtensions',
+          displayName: 'TenantAccessorExtensions',
+          kind: 'class',
+          namespace: 'StangaNetLib.Tenancy.Extensions',
+          summary: 'class TenantAccessorExtensions.',
+          signature: 'public static class TenantAccessorExtensions',
+          methods: [
+            { name: 'BeginScope', signature: 'public static TenantScope BeginScope(this ITenantAccessor accessor, TenantInfo tenant)', summary: 'Creates a TenantScope that sets CurrentTenant to tenant and restores the previous value when disposed.', parameters: [{ name: 'accessor', type: 'ITenantAccessor', description: 'accessor' }, { name: 'tenant', type: 'TenantInfo', description: 'tenant' }], returns: 'TenantScope', isStatic: true },
+          ],
+        },
+        {
+          slug: 'tenant-context-extensions',
+          name: 'TenantContextExtensions',
+          displayName: 'TenantContextExtensions',
+          kind: 'class',
+          namespace: 'StangaNetLib.Tenancy.Extensions',
+          summary: 'class TenantContextExtensions.',
+          signature: 'public static class TenantContextExtensions',
+          methods: [
+            { name: 'Get', signature: 'public IActionResult Get()', summary: 'Returns the resolved tenant or a failure if the current request has no active tenant. Use this in place of the if (!IsResolved) return Unauthorized() pattern.', returns: 'A successful Result{T} with the TenantInfo when a tenant is resolved; a failed Result{T} with Unauthorized otherwise.' },
+            { name: 'GetRequiredTenant', signature: 'public static Result<TenantInfo> GetRequiredTenant(this ITenantContext context)', summary: 'Returns the resolved tenant or a failure if the current request has no active tenant. Use this in place of the if (!IsResolved) return Unauthorized() pattern.', parameters: [{ name: 'context', type: 'ITenantContext', description: 'context' }], returns: 'A successful Result{T} with the TenantInfo when a tenant is resolved; a failed Result{T} with Unauthorized otherwise.', isStatic: true },
+            { name: 'GetTenantId', signature: 'public static Guid? GetTenantId(this ITenantContext context)', summary: 'Returns the resolved tenant\'s ID, or null when no tenant is resolved. Use RequireTenantId when a missing tenant should be treated as an error.', parameters: [{ name: 'context', type: 'ITenantContext', description: 'context' }], returns: 'Guid?', isStatic: true },
+            { name: 'Get', signature: 'public IActionResult Get()', summary: 'Returns the resolved tenant\'s ID or a failure when no tenant is resolved. Equivalent to calling GetRequiredTenant and extracting TenantId.', returns: 'A successful Result{T} with the tenant Guid when resolved; a failed Result{T} with Unauthorized otherwise.' },
+            { name: 'RequireTenantId', signature: 'public static Result<Guid> RequireTenantId(this ITenantContext context)', summary: 'Returns the resolved tenant\'s ID or a failure when no tenant is resolved. Equivalent to calling GetRequiredTenant and extracting TenantId.', parameters: [{ name: 'context', type: 'ITenantContext', description: 'context' }], returns: 'A successful Result{T} with the tenant Guid when resolved; a failed Result{T} with Unauthorized otherwise.', isStatic: true },
+            { name: 'GetConnectionString', signature: 'public static string? GetConnectionString(this ITenantContext context)', summary: 'Returns the resolved tenant\'s per-tenant connection string, or null when no tenant is resolved or the tenant has no connection string configured. Use RequireConnectionString when a missing connection string should be treated as an error.', parameters: [{ name: 'context', type: 'ITenantContext', description: 'context' }], returns: 'string?', isStatic: true },
+            { name: 'RequireConnectionString', signature: 'public static Result<string> RequireConnectionString(this ITenantContext context)', summary: 'Returns the resolved tenant\'s per-tenant connection string, or a failure when not available. Returns Unauthorized when no tenant is resolved and NotFound when the tenant has no connection string configured.', parameters: [{ name: 'context', type: 'ITenantContext', description: 'context' }], returns: 'A successful Result{T} with the non-empty connection string; a failed Result{T} with Unauthorized or NotFound otherwise.', isStatic: true },
+            { name: 'GetMetadata', signature: 'public static string? GetMetadata(this ITenantContext context, string key)', summary: 'Returns the raw string value stored in the resolved tenant\'s Metadata for key, or null when no tenant is resolved, the key is absent, or the metadata bag is null.', parameters: [{ name: 'context', type: 'ITenantContext', description: 'context' }, { name: 'key', type: 'string', description: 'key' }], returns: 'string?', isStatic: true },
+            { name: 'GetMetadata', signature: 'public static T? GetMetadata<T>(this ITenantContext context, string key, T? defaultValue = default)', summary: 'Deserializes the metadata value for key from the resolved tenant as T. Returns defaultValue when no tenant is resolved, the key is absent, or the metadata bag is null.', parameters: [{ name: 'context', type: 'ITenantContext', description: 'context' }, { name: 'key', type: 'string', description: 'key' }, { name: 'defaultValue', type: 'T?', description: 'defaultValue', optional: true }], returns: 'T?', isStatic: true },
+          ],
+        },
+        {
+          slug: 'tenant-info-extensions',
+          name: 'TenantInfoExtensions',
+          displayName: 'TenantInfoExtensions',
+          kind: 'class',
+          namespace: 'StangaNetLib.Tenancy.Extensions',
+          summary: 'class TenantInfoExtensions.',
+          signature: 'public static class TenantInfoExtensions',
+          methods: [
+            { name: 'GetMetadata', signature: 'public static string? GetMetadata(this TenantInfo tenant, string key)', summary: 'Returns the raw string value stored in Metadata for key, or null when the key is absent or Metadata is null.', parameters: [{ name: 'tenant', type: 'TenantInfo', description: 'tenant' }, { name: 'key', type: 'string', description: 'key' }], returns: 'string?', isStatic: true },
+            { name: 'GetMetadata', signature: 'public static T? GetMetadata<T>(this TenantInfo tenant, string key, T? defaultValue = default)', summary: 'Deserializes the metadata value for key as T using JsonSerializer. Returns defaultValue when the key is absent, the stored value is null or empty, or Metadata is null. When T is string, the raw value is returned without JSON parsing.', parameters: [{ name: 'tenant', type: 'TenantInfo', description: 'tenant' }, { name: 'key', type: 'string', description: 'key' }, { name: 'defaultValue', type: 'T?', description: 'defaultValue', optional: true }], returns: 'T?', isStatic: true },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Tenancy.Implementations',
+      summary: 'Types in StangaNetLib.Tenancy.Implementations.',
+      types: [
+        {
+          slug: 'async-local-tenant-accessor',
+          name: 'AsyncLocalTenantAccessor',
+          displayName: 'AsyncLocalTenantAccessor',
+          kind: 'class',
+          namespace: 'StangaNetLib.Tenancy.Implementations',
+          summary: 'AsyncLocal{T}-backed implementation of ITenantAccessor. The tenant value propagates automatically through async/await continuations within the same execution context. Each independent execution context (new thread, new task without captured context) starts with a clean null value.',
+          signature: 'public sealed class AsyncLocalTenantAccessor : ITenantAccessor',
+          implements: ['ITenantAccessor'],
+          properties: [
+            { name: 'CurrentTenant', type: 'TenantInfo?', access: 'get; set', summary: 'CurrentTenant' },
+          ],
+        },
+        {
+          slug: 'caching-tenant-store-decorator',
+          name: 'CachingTenantStoreDecorator',
+          displayName: 'CachingTenantStoreDecorator',
+          kind: 'class',
+          namespace: 'StangaNetLib.Tenancy.Implementations',
+          summary: 'Decorates an ITenantStore with an in-memory cache layer. Successful lookups are cached for CacheTtl so that repeated requests for the same tenant within the TTL window do not hit the underlying store. Failed lookups (not-found, errors) are never cached. Both by-ID and by-slug cache entries are primed on every successful lookup to minimise store hits when the pipeline uses mixed resolution strategies.',
+          signature: 'public sealed class CachingTenantStoreDecorator : ICachingTenantStore',
+          implements: ['ICachingTenantStore'],
+          properties: [
+            { name: 'CacheTtl', type: 'TimeSpan', access: 'get', summary: 'CacheTtl' },
+          ],
+          methods: [
+            { name: 'GetByIdAsync', signature: 'public async Task<Result<TenantInfo>> GetByIdAsync(Guid tenantId, CancellationToken cancellationToken = default)', summary: 'GetByIdAsync', parameters: [{ name: 'tenantId', type: 'Guid', description: 'tenantId' }, { name: 'cancellationToken', type: 'CancellationToken', description: 'cancellationToken', optional: true }], returns: 'Task<Result<TenantInfo>>', isAsync: true },
+            { name: 'GetBySlugAsync', signature: 'public async Task<Result<TenantInfo>> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)', summary: 'GetBySlugAsync', parameters: [{ name: 'slug', type: 'string', description: 'slug' }, { name: 'cancellationToken', type: 'CancellationToken', description: 'cancellationToken', optional: true }], returns: 'Task<Result<TenantInfo>>', isAsync: true },
+            { name: 'InvalidateById', signature: 'public void InvalidateById(Guid tenantId)', summary: 'InvalidateById', parameters: [{ name: 'tenantId', type: 'Guid', description: 'tenantId' }] },
+            { name: 'InvalidateBySlug', signature: 'public void InvalidateBySlug(string slug)', summary: 'InvalidateBySlug', parameters: [{ name: 'slug', type: 'string', description: 'slug' }] },
+          ],
+        },
+        {
+          slug: 'tenant-context',
+          name: 'TenantContext',
+          displayName: 'TenantContext',
+          kind: 'class',
+          namespace: 'StangaNetLib.Tenancy.Implementations',
+          summary: 'Scoped, mutable holder for the current tenant. Populated by TenantResolutionMiddleware. Consume as ITenantContext via DI.',
+          signature: 'public sealed class TenantContext : ITenantContext',
+          implements: ['ITenantContext'],
+          properties: [
+            { name: 'CurrentTenant', type: 'TenantInfo?', access: 'get; set', summary: 'CurrentTenant' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Tenancy.Middleware',
+      summary: 'Types in StangaNetLib.Tenancy.Middleware.',
+      types: [
+        {
+          slug: 'tenant-resolution-middleware',
+          name: 'TenantResolutionMiddleware',
+          displayName: 'TenantResolutionMiddleware',
+          kind: 'class',
+          namespace: 'StangaNetLib.Tenancy.Middleware',
+          summary: 'Runs the configured resolver chain on each request and populates ITenantContext and ITenantAccessor with the resolved tenant. Register via app.UseStangaNetLibTenancy().',
+          signature: 'public sealed class TenantResolutionMiddleware',
+          methods: [
+            { name: 'InvokeAsync', signature: 'public async Task InvokeAsync( HttpContext context, TenantContext tenantContext, ITenantStore tenantStore, IEnumerable<ITenantResolver> resolvers, IOptionsSnapshot<TenancySettings> settingsOptions)', summary: 'Runs the configured resolver chain; populates ITenantContext and ITenantAccessor on success and short-circuits with RequireTenantStatusCode when RequireTenant is true and no active tenant was found. Paths listed in ExcludedPaths bypass resolution entirely.', parameters: [{ name: 'context', type: 'HttpContext', description: 'context' }, { name: 'tenantContext', type: 'TenantContext', description: 'tenantContext' }, { name: 'tenantStore', type: 'ITenantStore', description: 'tenantStore' }, { name: 'resolvers', type: 'IEnumerable<ITenantResolver>', description: 'resolvers' }, { name: 'settingsOptions', type: 'IOptionsSnapshot<TenancySettings>', description: 'settingsOptions' }], returns: 'Task', isAsync: true },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Tenancy.Models',
+      summary: 'Types in StangaNetLib.Tenancy.Models.',
+      types: [
+        {
+          slug: 'tenant-lookup-type',
+          name: 'TenantLookupType',
+          displayName: 'TenantLookupType',
+          kind: 'enum',
+          namespace: 'StangaNetLib.Tenancy.Models',
+          summary: 'enum TenantLookupType.',
+          signature: 'public enum TenantLookupType',
+          enumValues: [
+            { name: 'ById', value: 0, summary: 'ById' },
+            { name: 'BySlug', value: 1, summary: 'BySlug' },
+          ],
+        },
+        {
+          slug: 'tenant-resolver-type',
+          name: 'TenantResolverType',
+          displayName: 'TenantResolverType',
+          kind: 'enum',
+          namespace: 'StangaNetLib.Tenancy.Models',
+          summary: 'enum TenantResolverType.',
+          signature: 'public enum TenantResolverType',
+          enumValues: [
+            { name: 'Header', value: 0, summary: 'Header' },
+            { name: 'Host', value: 1, summary: 'Host' },
+            { name: 'Path', value: 2, summary: 'Path' },
+            { name: 'Claim', value: 3, summary: 'Claim' },
+            { name: 'QueryString', value: 4, summary: 'QueryString' },
+          ],
+        },
+        {
+          slug: 'tenant-scope',
+          name: 'TenantScope',
+          displayName: 'TenantScope',
+          kind: 'class',
+          namespace: 'StangaNetLib.Tenancy.Models',
+          summary: 'A disposable scope that sets CurrentTenant on construction and restores the previous value on Dispose. Create instances via accessor.BeginScope(tenant).',
+          signature: 'public sealed class TenantScope : IDisposable',
+          implements: ['IDisposable'],
+          methods: [
+            { name: 'Dispose', signature: 'public void Dispose()', summary: 'Dispose' },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Tenancy.Settings',
+      summary: 'Types in StangaNetLib.Tenancy.Settings.',
+      types: [
+        {
+          slug: 'tenancy-settings',
+          name: 'TenancySettings',
+          displayName: 'TenancySettings',
+          kind: 'class',
+          namespace: 'StangaNetLib.Tenancy.Settings',
+          summary: 'class TenancySettings.',
+          signature: 'public sealed class TenancySettings',
+          properties: [
+            { name: 'ResolverOrder', type: 'IList<TenantResolverType>', access: 'get; set', summary: 'Ordered list of resolver strategies the middleware will attempt for each request. The first strategy that returns a non-null key wins. Default: [Header]. Must contain at least one entry.' },
+            { name: 'HeaderName', type: 'string', access: 'get; set', summary: 'HeaderName' },
+            { name: 'HeaderLookupType', type: 'TenantLookupType', access: 'get; set', summary: 'HeaderLookupType' },
+            { name: 'ClaimType', type: 'string', access: 'get; set', summary: 'ClaimType' },
+            { name: 'ClaimLookupType', type: 'TenantLookupType', access: 'get; set', summary: 'ClaimLookupType' },
+            { name: 'PathSegmentIndex', type: 'int', access: 'get; set', summary: 'Zero-based index of the path segment extracted by PathTenantResolver. For a path of /acme/orders, index 0 yields acme. Default: 0.' },
+            { name: 'QueryStringParameterName', type: 'string', access: 'get; set', summary: 'QueryStringParameterName' },
+            { name: 'QueryStringLookupType', type: 'TenantLookupType', access: 'get; set', summary: 'QueryStringLookupType' },
+            { name: 'PathLookupType', type: 'TenantLookupType', access: 'get; set', summary: 'PathLookupType' },
+            { name: 'HostLookupType', type: 'TenantLookupType', access: 'get; set', summary: 'HostLookupType' },
+            { name: 'HostMinParts', type: 'int', access: 'get; set', summary: 'Minimum number of dot-separated parts required in the host for subdomain extraction to proceed. Default: 3 (e.g. acme.example.com). Set to 2 to support two-part hosts such as acme.localdev. Must be at least 2.' },
+            { name: 'RequireTenant', type: 'bool', access: 'get; set', summary: 'When true, requests that cannot be associated with an active tenant receive a response with RequireTenantStatusCode. When false (default), unresolved-tenant requests pass through to the next middleware.' },
+            { name: 'RequireTenantStatusCode', type: 'int', access: 'get; set', summary: 'HTTP status code written when RequireTenant is true and no active tenant is resolved. Common values: 401 Unauthorized (default) or 403 Forbidden.' },
+            { name: 'AllowInactiveTenants', type: 'bool', access: 'get; set', summary: 'When true, tenants with IsActive set to false are still resolved. Useful for admin or suspension-management endpoints. Default: false.' },
+            { name: 'ExcludedPaths', type: 'IList<string>', access: 'get; set', summary: 'Request path prefixes that bypass tenant resolution entirely. Useful for health checks, metrics, and Swagger endpoints. Each entry must start with /. Matching is case-insensitive. Default: empty.' },
+            { name: 'CacheTtl', type: 'TimeSpan?', access: 'get; set', summary: 'Cache TTL used by AddStangaNetLibTenancyCache when no explicit TTL is supplied to the extension method. When null, the decorator falls back to its built-in default of 5 minutes. When set, the value must be positive (validated at startup).' },
+          ],
+          fields: [
+            { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"TenancySettings"' },
+          ],
+        }
+      ],
+    }
+  ],
+};
