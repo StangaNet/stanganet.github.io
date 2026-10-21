@@ -294,11 +294,11 @@ builder.Services.AddStangaNetLibMedia(builder.Configuration);
   {
     librarySlug: 'auth',
     intro: L(
-      'JWT auth wiring, Auth0 helpers, and token store abstractions.',
-      'Wiring JWT, helper Auth0 e astrazioni token store.',
+      'JWT auth wiring, Auth0 helpers, external IdP token exchange, and token store abstractions.',
+      'Wiring JWT, helper Auth0, token exchange IdP esterni e astrazioni token store.',
     ),
     sections: [
-      install('StangaNetLib.Auth', '1.0.1'),
+      install('StangaNetLib.Auth', '1.1.0'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -307,6 +307,28 @@ builder.Services.AddStangaNetLibMedia(builder.Configuration);
 builder.Services.AddStangaNetLibAuth(builder.Configuration);
 // Auth0: services.AddStangaNetLibAuth0(builder.Configuration);
 // Dev store: services.AddStangaNetLibAuthInMemoryTokenStore();`,
+      },
+      {
+        id: 'external-providers',
+        title: L('External identity (token exchange)', 'Identity esterna (token exchange)'),
+        description: L(
+          'Validate Google/Apple/Microsoft ID tokens or Facebook access tokens, then issue your own JWT.',
+          'Valida ID token Google/Apple/Microsoft o access token Facebook, poi emetti il tuo JWT.',
+        ),
+        code: `using StangaNetLib.Auth.Abstractions;
+using StangaNetLib.Auth.Extensions;
+using StangaNetLib.Auth.Models;
+
+builder.Services.AddStangaNetLibAuth(builder.Configuration);
+builder.Services.AddStangaNetLibAuthExternalGoogle(builder.Configuration);
+builder.Services.AddStangaNetLibAuthExternalApple(builder.Configuration);
+builder.Services.AddStangaNetLibAuthExternalFacebook(builder.Configuration);
+builder.Services.AddStangaNetLibAuthExternalMicrosoft(builder.Configuration);
+
+// In an endpoint:
+var result = await external.ValidateAsync(ExternalAuthProviders.Google, idToken);
+if (result.IsFailure) return Results.Unauthorized();
+// Map result.Value to a local user, then IJwtTokenGenerator.GenerateAccessToken(...)`,
       },
     ],
   },

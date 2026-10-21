@@ -3,11 +3,11 @@ import type { LibraryDoc } from '../types';
 export const authLibrary: LibraryDoc = {
   slug: 'auth',
   name: 'StangaNetLib.Auth',
-  version: '1.0.1',
+  version: '1.1.0',
   targetFrameworks: ['net8.0', 'net9.0'],
   tagline: 'Authentication and authorization building blocks for ASP.NET',
   description:
-    'Auth primitives for token handling, identity, and policy helpers aligned with StangaNetLib.Core Result patterns.',
+    'JWT issuance/validation, Auth0, and external identity token exchange (Google, Apple, Facebook, Microsoft) aligned with StangaNetLib.Core Result patterns.',
   repository: 'https://github.com/StangaNet/StangaNetLib.Auth',
   namespaces: [
     {
@@ -22,6 +22,33 @@ export const authLibrary: LibraryDoc = {
           namespace: 'StangaNetLib.Auth.Abstractions',
           summary: 'Provides access to the Auth0 Management API for user and role management. Requires ManagementClientId and ManagementClientSecret to be configured. Register via AddStangaNetLibAuth0ManagementService().',
           signature: 'public interface IAuth0ManagementService',
+        },
+        {
+          slug: 'i-external-identity-provider',
+          name: 'IExternalIdentityProvider',
+          displayName: 'IExternalIdentityProvider',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Auth.Abstractions',
+          summary: 'Validates a token from a single external identity provider and maps it to ExternalIdentity.',
+          signature: 'public interface IExternalIdentityProvider',
+          methods: [
+            { name: 'ValidateAsync', signature: 'Task<Result<ExternalIdentity>> ValidateAsync(string token, CancellationToken ct = default)', summary: 'ValidateAsync', parameters: [{ name: 'token', type: 'string', description: 'token' }, { name: 'ct', type: 'CancellationToken', description: 'ct', optional: true }], returns: 'Task<Result<ExternalIdentity>>', isAsync: true },
+          ],
+          properties: [
+            { name: 'ProviderName', type: 'string', access: 'get', summary: 'Canonical provider name.' },
+          ],
+        },
+        {
+          slug: 'i-external-identity-service',
+          name: 'IExternalIdentityService',
+          displayName: 'IExternalIdentityService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Auth.Abstractions',
+          summary: 'Resolves a registered IExternalIdentityProvider by name and validates the token.',
+          signature: 'public interface IExternalIdentityService',
+          methods: [
+            { name: 'ValidateAsync', signature: 'Task<Result<ExternalIdentity>> ValidateAsync(string provider, string token, CancellationToken ct = default)', summary: 'ValidateAsync', parameters: [{ name: 'provider', type: 'string', description: 'provider' }, { name: 'token', type: 'string', description: 'token' }, { name: 'ct', type: 'CancellationToken', description: 'ct', optional: true }], returns: 'Task<Result<ExternalIdentity>>', isAsync: true },
+          ],
         },
         {
           slug: 'i-jwt-token-generator',
@@ -90,6 +117,10 @@ export const authLibrary: LibraryDoc = {
             { name: 'AddStangaNetLibAuth0', signature: 'public static IServiceCollection AddStangaNetLibAuth0( this IServiceCollection services, IConfiguration configuration)', summary: 'Registers JWT Bearer authentication delegated to Auth0 (RS256, JWKS endpoint), IPasswordHasher, and ITokenRevocationService.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
             { name: 'AddStangaNetLibAuth0ManagementService', signature: 'public static IServiceCollection AddStangaNetLibAuth0ManagementService( this IServiceCollection services, IConfiguration configuration, Action<IHttpClientBuilder>? configureHttpClient = null)', summary: 'Registers IAuth0ManagementService for interacting with the Auth0 Management API. Requires Auth0Settings.ManagementClientId and ManagementClientSecret. Can be called standalone or after AddStangaNetLibAuth0.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'The service collection to register into. Application configuration used to bind Auth0Settings. Optional callback to further configure the IHttpClientBuilder for the Auth0 management HttpClient. Use this hook to attach resilience handlers, delegating handlers, or logging. Example using Microsoft.Extensions.Http.Resilience (Polly 8): services.AddStangaNetLibAuth0ManagementService(config, b => b.AddResilienceHandler("Auth0", p => { p.AddRetry(new HttpRetryStrategyOptions { MaxRetryAttempts = 3 }); p.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions()); p.AddTimeout(TimeSpan.FromSeconds(10)); }));' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }, { name: 'configureHttpClient', type: 'Action<IHttpClientBuilder>?', description: 'configureHttpClient', optional: true }], returns: 'IServiceCollection', isStatic: true },
             { name: 'AddStangaNetLibAuthInMemoryTokenStore', signature: 'public static IServiceCollection AddStangaNetLibAuthInMemoryTokenStore( this IServiceCollection services)', summary: 'Registers InMemoryRefreshTokenRepository as IRefreshTokenRepository. Use only for development and testing — data is not persisted across restarts.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'AddStangaNetLibAuthExternalGoogle', signature: 'public static IServiceCollection AddStangaNetLibAuthExternalGoogle(this IServiceCollection services, IConfiguration configuration)', summary: 'Registers Google ID-token validation and IExternalIdentityService.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'AddStangaNetLibAuthExternalApple', signature: 'public static IServiceCollection AddStangaNetLibAuthExternalApple(this IServiceCollection services, IConfiguration configuration)', summary: 'Registers Sign in with Apple identity-token validation and IExternalIdentityService.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'AddStangaNetLibAuthExternalFacebook', signature: 'public static IServiceCollection AddStangaNetLibAuthExternalFacebook(this IServiceCollection services, IConfiguration configuration, Action<IHttpClientBuilder>? configureHttpClient = null)', summary: 'Registers Facebook access-token validation (Graph debug_token + /me) and IExternalIdentityService.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }, { name: 'configureHttpClient', type: 'Action<IHttpClientBuilder>?', description: 'configureHttpClient', optional: true }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'AddStangaNetLibAuthExternalMicrosoft', signature: 'public static IServiceCollection AddStangaNetLibAuthExternalMicrosoft(this IServiceCollection services, IConfiguration configuration)', summary: 'Registers Microsoft identity platform ID-token validation and IExternalIdentityService.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
           ],
         }
       ],
@@ -147,6 +178,54 @@ export const authLibrary: LibraryDoc = {
             { name: 'LastLogin', type: 'DateTime?', access: 'get; init', summary: 'LastLogin' },
             { name: 'UserMetadata', type: 'IReadOnlyDictionary<string, object?>', access: 'get; init', summary: 'UserMetadata' },
             { name: 'AppMetadata', type: 'IReadOnlyDictionary<string, object?>', access: 'get; init', summary: 'AppMetadata' },
+          ],
+        },
+        {
+          slug: 'external-auth-error-codes',
+          name: 'ExternalAuthErrorCodes',
+          displayName: 'ExternalAuthErrorCodes',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Models',
+          summary: 'Machine-readable error codes returned by external identity validation.',
+          signature: 'public static class ExternalAuthErrorCodes',
+          fields: [
+            { name: 'UnknownProvider', type: 'string', summary: 'UnknownProvider', value: '"external_provider.unknown"' },
+            { name: 'InvalidToken', type: 'string', summary: 'InvalidToken', value: '"external_token.invalid"' },
+            { name: 'EmptyToken', type: 'string', summary: 'EmptyToken', value: '"external_token.empty"' },
+            { name: 'ProviderError', type: 'string', summary: 'ProviderError', value: '"external_provider.error"' },
+          ],
+        },
+        {
+          slug: 'external-auth-providers',
+          name: 'ExternalAuthProviders',
+          displayName: 'ExternalAuthProviders',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Models',
+          summary: 'Canonical provider name constants for external identity token exchange.',
+          signature: 'public static class ExternalAuthProviders',
+          fields: [
+            { name: 'Google', type: 'string', summary: 'Google', value: '"google"' },
+            { name: 'Apple', type: 'string', summary: 'Apple', value: '"apple"' },
+            { name: 'Facebook', type: 'string', summary: 'Facebook', value: '"facebook"' },
+            { name: 'Microsoft', type: 'string', summary: 'Microsoft', value: '"microsoft"' },
+          ],
+        },
+        {
+          slug: 'external-identity',
+          name: 'ExternalIdentity',
+          displayName: 'ExternalIdentity',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Models',
+          summary: 'Verified identity extracted from an external provider token.',
+          signature: 'public sealed class ExternalIdentity',
+          properties: [
+            { name: 'Provider', type: 'string', access: 'get; init', summary: 'Provider' },
+            { name: 'Subject', type: 'string', access: 'get; init', summary: 'Subject' },
+            { name: 'Email', type: 'string?', access: 'get; init', summary: 'Email' },
+            { name: 'EmailVerified', type: 'bool', access: 'get; init', summary: 'EmailVerified' },
+            { name: 'DisplayName', type: 'string?', access: 'get; init', summary: 'DisplayName' },
+            { name: 'PictureUrl', type: 'string?', access: 'get; init', summary: 'PictureUrl' },
+            { name: 'RawClaims', type: 'IReadOnlyDictionary<string, string>', access: 'get; init', summary: 'RawClaims' },
           ],
         },
         {
@@ -247,6 +326,21 @@ export const authLibrary: LibraryDoc = {
       summary: 'Types in StangaNetLib.Auth.Settings.',
       types: [
         {
+          slug: 'apple-external-auth-settings',
+          name: 'AppleExternalAuthSettings',
+          displayName: 'AppleExternalAuthSettings',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Settings',
+          summary: 'Configuration for Sign in with Apple identity-token validation.',
+          signature: 'public sealed class AppleExternalAuthSettings',
+          properties: [
+            { name: 'ClientIds', type: 'IReadOnlyList<string>', access: 'get; init', summary: 'ClientIds' },
+          ],
+          fields: [
+            { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"Auth:External:Apple"' },
+          ],
+        },
+        {
           slug: 'auth0-settings',
           name: 'Auth0Settings',
           displayName: 'Auth0Settings',
@@ -262,6 +356,37 @@ export const authLibrary: LibraryDoc = {
           ],
           fields: [
             { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"Auth0Settings"' },
+          ],
+        },
+        {
+          slug: 'facebook-external-auth-settings',
+          name: 'FacebookExternalAuthSettings',
+          displayName: 'FacebookExternalAuthSettings',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Settings',
+          summary: 'Configuration for Facebook access-token validation via Graph API.',
+          signature: 'public sealed class FacebookExternalAuthSettings',
+          properties: [
+            { name: 'AppId', type: 'string', access: 'get; init', summary: 'AppId' },
+            { name: 'AppSecret', type: 'string', access: 'get; init', summary: 'AppSecret' },
+          ],
+          fields: [
+            { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"Auth:External:Facebook"' },
+          ],
+        },
+        {
+          slug: 'google-external-auth-settings',
+          name: 'GoogleExternalAuthSettings',
+          displayName: 'GoogleExternalAuthSettings',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Settings',
+          summary: 'Configuration for Google ID-token validation.',
+          signature: 'public sealed class GoogleExternalAuthSettings',
+          properties: [
+            { name: 'ClientIds', type: 'IReadOnlyList<string>', access: 'get; init', summary: 'ClientIds' },
+          ],
+          fields: [
+            { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"Auth:External:Google"' },
           ],
         },
         {
@@ -281,6 +406,22 @@ export const authLibrary: LibraryDoc = {
           ],
           fields: [
             { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"JwtSettings"' },
+          ],
+        },
+        {
+          slug: 'microsoft-external-auth-settings',
+          name: 'MicrosoftExternalAuthSettings',
+          displayName: 'MicrosoftExternalAuthSettings',
+          kind: 'class',
+          namespace: 'StangaNetLib.Auth.Settings',
+          summary: 'Configuration for Microsoft identity platform ID-token validation.',
+          signature: 'public sealed class MicrosoftExternalAuthSettings',
+          properties: [
+            { name: 'ClientIds', type: 'IReadOnlyList<string>', access: 'get; init', summary: 'ClientIds' },
+            { name: 'TenantId', type: 'string', access: 'get; init', summary: 'TenantId' },
+          ],
+          fields: [
+            { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"Auth:External:Microsoft"' },
           ],
         }
       ],
