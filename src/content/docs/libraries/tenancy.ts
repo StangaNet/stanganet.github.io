@@ -4,7 +4,7 @@ export const tenancyLibrary: LibraryDoc = {
   slug: 'tenancy',
   name: 'StangaNetLib.Tenancy',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Multi-tenant context and resolution',
   description:
     'Tenant identification, context accessors, and resolution strategies for multi-tenant applications.',

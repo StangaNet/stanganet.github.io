@@ -438,7 +438,7 @@ function readVersion(csprojPath) {
     xml.match(/<TargetFramework>([^<]+)<\/TargetFramework>/);
   return {
     version: v ? v[1] : '1.0.0',
-    frameworks: tfm ? tfm[1].split(';').map((x) => x.trim()) : ['net8.0', 'net9.0'],
+    frameworks: tfm ? tfm[1].split(';').map((x) => x.trim()) : ['net8.0', 'net9.0', 'net10.0'],
   };
 }
 

@@ -4,7 +4,7 @@ export const gdprLibrary: LibraryDoc = {
   slug: 'gdpr',
   name: 'StangaNetLib.Gdpr',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Consent, DSAR, and pseudonymization for GDPR compliance',
   description:
     'GDPR-oriented services: consent repositories, DSAR lifecycle, pseudonymization, and endpoint consent enforcement.',

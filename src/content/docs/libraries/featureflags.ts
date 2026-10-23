@@ -4,7 +4,7 @@ export const featureFlagsLibrary: LibraryDoc = {
   slug: 'featureflags',
   name: 'StangaNetLib.FeatureFlags',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Feature flag evaluation and providers',
   description:
     'Feature flag service abstractions and in-memory/config providers for toggling behavior safely.',

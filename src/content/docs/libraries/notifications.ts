@@ -4,7 +4,7 @@ export const notificationsLibrary: LibraryDoc = {
   slug: 'notifications',
   name: 'StangaNetLib.Notifications',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Multi-channel notification dispatch and templates',
   description:
     'Notification channels, templates, and dispatch services for email and other providers.',

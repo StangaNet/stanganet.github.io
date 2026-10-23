@@ -4,7 +4,7 @@ export const authLibrary: LibraryDoc = {
   slug: 'auth',
   name: 'StangaNetLib.Auth',
   version: '1.1.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Authentication and authorization building blocks for ASP.NET',
   description:
     'JWT issuance/validation, Auth0, and external identity token exchange (Google, Apple, Facebook, Microsoft) aligned with StangaNetLib.Core Result patterns.',

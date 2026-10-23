@@ -4,7 +4,7 @@ export const eventBusLibrary: LibraryDoc = {
   slug: 'eventbus',
   name: 'StangaNetLib.EventBus',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Pub/sub messaging with in-memory and broker backends',
   description:
     'Event bus abstractions with in-memory and RabbitMQ-style providers, integrated with Jobs where needed.',

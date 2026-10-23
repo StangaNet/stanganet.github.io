@@ -4,7 +4,7 @@ export const storageLibrary: LibraryDoc = {
   slug: 'storage',
   name: 'StangaNetLib.Storage',
   version: '1.0.1',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Blob/object storage abstractions and providers',
   description:
     'Storage service contracts with local and cloud-oriented providers for binary object persistence.',

@@ -4,7 +4,7 @@ export const observabilityLibrary: LibraryDoc = {
   slug: 'observability',
   name: 'StangaNetLib.Observability',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Logging, metrics, and tracing helpers',
   description:
     'Observability wiring for structured logging, metrics, and activity tracing across StangaNetLib services.',

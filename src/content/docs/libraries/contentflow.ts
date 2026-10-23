@@ -4,7 +4,7 @@ export const contentFlowLibrary: LibraryDoc = {
   slug: 'contentflow',
   name: 'StangaNetLib.ContentFlow',
   version: '1.1.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Content lifecycle workflow with Result-based transitions',
   description:
     'Immutable content items and workflow services for Draft → Pending → Approved → Published with review trails.',

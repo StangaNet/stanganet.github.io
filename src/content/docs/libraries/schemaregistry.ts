@@ -4,7 +4,7 @@ export const schemaRegistryLibrary: LibraryDoc = {
   slug: 'schemaregistry',
   name: 'StangaNetLib.SchemaRegistry',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Versioned JSON schema validation',
   description:
     'Schema registry for versioned JSON contracts with validation against registered schemas.',

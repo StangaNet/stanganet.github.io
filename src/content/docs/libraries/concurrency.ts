@@ -4,7 +4,7 @@ export const concurrencyLibrary: LibraryDoc = {
   slug: 'concurrency',
   name: 'StangaNetLib.Concurrency',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Keyed locks, throttles, work queues, and debouncing',
   description:
     'Async concurrency primitives: keyed locks, semaphore throttles, bounded work queues, and per-key debouncers.',

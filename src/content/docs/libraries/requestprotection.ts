@@ -4,7 +4,7 @@ export const requestProtectionLibrary: LibraryDoc = {
   slug: 'requestprotection',
   name: 'StangaNetLib.RequestProtection',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Rate limiting and request abuse protection',
   description:
     'ASP.NET request protection: rate limits, bot/abuse controls, backed by Caching where appropriate.',

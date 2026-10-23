@@ -4,7 +4,7 @@ export const mediaLibrary: LibraryDoc = {
   slug: 'media',
   name: 'StangaNetLib.Media',
   version: '1.0.1',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Media storage, processing, and metadata',
   description:
     'Media asset abstractions for upload, storage backends, and processing pipelines.',

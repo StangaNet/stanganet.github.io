@@ -4,7 +4,7 @@ export const resilienceLibrary: LibraryDoc = {
   slug: 'resilience',
   name: 'StangaNetLib.Resilience',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Named Polly pipelines that return Result',
   description:
     'Resilience pipelines (retry, circuit breaker, timeout) via Microsoft.Extensions.Resilience, mapping failures to Core Result types.',

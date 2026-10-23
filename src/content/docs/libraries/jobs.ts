@@ -4,7 +4,7 @@ export const jobsLibrary: LibraryDoc = {
   slug: 'jobs',
   name: 'StangaNetLib.Jobs',
   version: '1.0.0',
-  targetFrameworks: ['net8.0', 'net9.0'],
+  targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Background job scheduling and execution',
   description:
     'Job definitions, schedulers, and runners for reliable background work on top of Core concurrency primitives.',
