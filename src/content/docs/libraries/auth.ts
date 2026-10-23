@@ -3,7 +3,7 @@ import type { LibraryDoc } from '../types';
 export const authLibrary: LibraryDoc = {
   slug: 'auth',
   name: 'StangaNetLib.Auth',
-  version: '1.1.0',
+  version: '1.1.1',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Authentication and authorization building blocks for ASP.NET',
   description:

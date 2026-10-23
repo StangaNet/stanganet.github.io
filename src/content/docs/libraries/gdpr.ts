@@ -3,7 +3,7 @@ import type { LibraryDoc } from '../types';
 export const gdprLibrary: LibraryDoc = {
   slug: 'gdpr',
   name: 'StangaNetLib.Gdpr',
-  version: '1.0.0',
+  version: '1.0.1',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Consent, DSAR, and pseudonymization for GDPR compliance',
   description:

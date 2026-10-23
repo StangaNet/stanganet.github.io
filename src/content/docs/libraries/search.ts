@@ -3,7 +3,7 @@ import type { LibraryDoc } from '../types';
 export const searchLibrary: LibraryDoc = {
   slug: 'search',
   name: 'StangaNetLib.Search',
-  version: '1.0.0',
+  version: '1.0.1',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Search abstractions with in-memory BM25 provider',
   description:

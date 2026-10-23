@@ -3,7 +3,7 @@ import type { LibraryDoc } from '../types';
 export const notificationsLibrary: LibraryDoc = {
   slug: 'notifications',
   name: 'StangaNetLib.Notifications',
-  version: '1.0.0',
+  version: '1.0.1',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Multi-channel notification dispatch and templates',
   description:

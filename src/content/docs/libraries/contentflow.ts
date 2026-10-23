@@ -3,7 +3,7 @@ import type { LibraryDoc } from '../types';
 export const contentFlowLibrary: LibraryDoc = {
   slug: 'contentflow',
   name: 'StangaNetLib.ContentFlow',
-  version: '1.1.0',
+  version: '1.1.1',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Content lifecycle workflow with Result-based transitions',
   description:

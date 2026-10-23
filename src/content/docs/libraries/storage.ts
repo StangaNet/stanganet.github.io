@@ -3,7 +3,7 @@ import type { LibraryDoc } from '../types';
 export const storageLibrary: LibraryDoc = {
   slug: 'storage',
   name: 'StangaNetLib.Storage',
-  version: '1.0.1',
+  version: '1.0.2',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'Blob/object storage abstractions and providers',
   description:

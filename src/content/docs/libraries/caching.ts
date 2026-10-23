@@ -3,7 +3,7 @@ import type { LibraryDoc } from '../types';
 export const cachingLibrary: LibraryDoc = {
   slug: 'caching',
   name: 'StangaNetLib.Caching',
-  version: '1.0.1',
+  version: '1.0.2',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
   tagline: 'In-memory and distributed caching with lock-aware helpers',
   description:
