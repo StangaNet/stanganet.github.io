@@ -3,11 +3,11 @@ import type { LibraryDoc } from '../types';
 export const observabilityLibrary: LibraryDoc = {
   slug: 'observability',
   name: 'StangaNetLib.Observability',
-  version: '1.0.1',
+  version: '1.1.0',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
-  tagline: 'Logging, metrics, and tracing helpers',
+  tagline: 'ASP.NET observability middleware with financial PII masking',
   description:
-    'Observability wiring for structured logging, metrics, and activity tracing across StangaNetLib services.',
+    'Correlation IDs, request logging, ProblemDetails exceptions, ETag, security headers, and PII log masking including financial helpers (amount, IBAN, description).',
   repository: 'https://github.com/StangaNet/StangaNetLib.Observability',
   namespaces: [
     {
@@ -100,6 +100,10 @@ export const observabilityLibrary: LibraryDoc = {
             { name: 'MaskPhoneNumber', signature: 'public Result<string> MaskPhoneNumber(string? phoneNumber)', summary: 'MaskPhoneNumber', parameters: [{ name: 'phoneNumber', type: 'string?', description: 'phoneNumber' }], returns: 'Result<string>' },
             { name: 'MaskName', signature: 'public Result<string> MaskName(string? name)', summary: 'MaskName', parameters: [{ name: 'name', type: 'string?', description: 'name' }], returns: 'Result<string>' },
             { name: 'MaskString', signature: 'public Result<string> MaskString(string? value, int visibleChars = 2)', summary: 'MaskString', parameters: [{ name: 'value', type: 'string?', description: 'value' }, { name: 'visibleChars', type: 'int', description: 'visibleChars', optional: true }], returns: 'Result<string>' },
+            { name: 'MaskAmount', signature: 'public Result<string> MaskAmount(string? amount)', summary: 'MaskAmount', parameters: [{ name: 'amount', type: 'string?', description: 'amount' }], returns: 'Result<string>' },
+            { name: 'MaskIban', signature: 'public Result<string> MaskIban(string? iban)', summary: 'MaskIban', parameters: [{ name: 'iban', type: 'string?', description: 'iban' }], returns: 'Result<string>' },
+            { name: 'MaskDescription', signature: 'public Result<string> MaskDescription(string? description)', summary: 'MaskDescription', parameters: [{ name: 'description', type: 'string?', description: 'description' }], returns: 'Result<string>' },
+            { name: 'MaskFinancialPii', signature: 'public Result<string> MaskFinancialPii(string? value)', summary: 'MaskFinancialPii', parameters: [{ name: 'value', type: 'string?', description: 'value' }], returns: 'Result<string>' },
           ],
         }
       ],

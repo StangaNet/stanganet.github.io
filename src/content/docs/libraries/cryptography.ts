@@ -3,17 +3,26 @@ import type { LibraryDoc } from '../types';
 export const cryptographyLibrary: LibraryDoc = {
   slug: 'cryptography',
   name: 'StangaNetLib.Cryptography',
-  version: '1.0.1',
+  version: '1.1.0',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
-  tagline: 'Encryption, hashing, and secret-handling helpers',
+  tagline: 'Hashing, KDF, HMAC, and AES-GCM at-rest SNEN envelopes',
   description:
-    'Cryptographic utilities (encrypt/decrypt, hash, protect) designed for application and domain use without heavy framework coupling.',
+    'Hashing, key derivation, HMAC, AES-GCM encryption, versioned SNEN at-rest blob/stream envelopes, RSA digital signatures, and secure token generation.',
   repository: 'https://github.com/StangaNet/StangaNetLib.Cryptography',
   namespaces: [
     {
       name: 'StangaNetLib.Cryptography.Abstractions',
       summary: 'Types in StangaNetLib.Cryptography.Abstractions.',
       types: [
+        {
+          slug: 'i-at-rest-encryption-service',
+          name: 'IAtRestEncryptionService',
+          displayName: 'IAtRestEncryptionService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Cryptography.Abstractions',
+          summary: 'Encrypts and decrypts blobs and streams at rest using AES-256-GCM with a versioned envelope that embeds KDF parameters (PBKDF2 or HKDF) and salt.',
+          signature: 'public interface IAtRestEncryptionService',
+        },
         {
           slug: 'i-digital-signature-service',
           name: 'IDigitalSignatureService',
@@ -92,9 +101,28 @@ export const cryptographyLibrary: LibraryDoc = {
           summary: 'class ServiceCollectionExtensions.',
           signature: 'public static class ServiceCollectionExtensions',
           methods: [
-            { name: 'MyService', signature: 'public class MyService(IHashService hash, IHmacService hmac, /// IKeyDerivationService kdf, IDigitalSignatureService sig, /// IEncryptionService enc, ISecureTokenService tokens)', summary: 'Registers all cryptography services using settings bound from configuration.', parameters: [{ name: 'hash', type: 'IHashService', description: 'hash' }, { name: 'hmac', type: 'IHmacService', description: 'hmac' }, { name: 'kdf', type: '/// IKeyDerivationService', description: 'kdf' }, { name: 'sig', type: 'IDigitalSignatureService', description: 'sig' }, { name: 'enc', type: '/// IEncryptionService', description: 'enc' }, { name: 'tokens', type: 'ISecureTokenService', description: 'tokens' }], returns: 'class' },
+            { name: 'MyService', signature: 'public class MyService(IHashService hash, IHmacService hmac, /// IKeyDerivationService kdf, IDigitalSignatureService sig, /// IEncryptionService enc, IAtRestEncryptionService atRest, /// ISecureTok...', summary: 'Registers all cryptography services using settings bound from configuration.', parameters: [{ name: 'hash', type: 'IHashService', description: 'hash' }, { name: 'hmac', type: 'IHmacService', description: 'hmac' }, { name: 'kdf', type: '/// IKeyDerivationService', description: 'kdf' }, { name: 'sig', type: 'IDigitalSignatureService', description: 'sig' }, { name: 'enc', type: '/// IEncryptionService', description: 'enc' }, { name: 'atRest', type: 'IAtRestEncryptionService', description: 'atRest' }, { name: 'tokens', type: '/// ISecureTokenService', description: 'tokens' }], returns: 'class' },
             { name: 'AddStangaNetLibCryptography', signature: 'public static IServiceCollection AddStangaNetLibCryptography( this IServiceCollection services, IConfiguration configuration)', summary: 'Registers all cryptography services using settings bound from configuration.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
             { name: 'AddStangaNetLibCryptography', signature: 'public static IServiceCollection AddStangaNetLibCryptography( this IServiceCollection services)', summary: 'Registers all cryptography services using default CryptographySettings values. Suitable for environments where no external configuration is needed.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }], returns: 'IServiceCollection', isStatic: true },
+          ],
+        }
+      ],
+    },
+    {
+      name: 'StangaNetLib.Cryptography.Helpers',
+      summary: 'Types in StangaNetLib.Cryptography.Helpers.',
+      types: [
+        {
+          slug: 'file-envelope',
+          name: 'FileEnvelope',
+          displayName: 'FileEnvelope',
+          kind: 'class',
+          namespace: 'StangaNetLib.Cryptography.Helpers',
+          summary: 'File-path helpers that wrap IAtRestEncryptionService stream APIs for portable encrypted file envelopes.',
+          signature: 'public static class FileEnvelope',
+          methods: [
+            { name: 'WriteAsync', signature: 'public static async Task<Result> WriteAsync( IAtRestEncryptionService encryption, string sourcePath, string destinationPath, string passphrase, byte[]? associatedData = null, CancellationToken canc...', summary: 'Encrypts the file at sourcePath into a new envelope file at destinationPath using PBKDF2 + AES-GCM.', parameters: [{ name: 'encryption', type: 'IAtRestEncryptionService', description: 'encryption' }, { name: 'sourcePath', type: 'string', description: 'sourcePath' }, { name: 'destinationPath', type: 'string', description: 'destinationPath' }, { name: 'passphrase', type: 'string', description: 'passphrase' }, { name: 'associatedData', type: 'byte[]?', description: 'associatedData', optional: true }, { name: 'cancellationToken', type: 'CancellationToken', description: 'cancellationToken', optional: true }], returns: 'Task<Result>', isStatic: true, isAsync: true },
+            { name: 'ReadAsync', signature: 'public static async Task<Result> ReadAsync( IAtRestEncryptionService encryption, string sourcePath, string destinationPath, string passphrase, byte[]? associatedData = null, CancellationToken cance...', summary: 'Decrypts the envelope file at sourcePath into destinationPath.', parameters: [{ name: 'encryption', type: 'IAtRestEncryptionService', description: 'encryption' }, { name: 'sourcePath', type: 'string', description: 'sourcePath' }, { name: 'destinationPath', type: 'string', description: 'destinationPath' }, { name: 'passphrase', type: 'string', description: 'passphrase' }, { name: 'associatedData', type: 'byte[]?', description: 'associatedData', optional: true }, { name: 'cancellationToken', type: 'CancellationToken', description: 'cancellationToken', optional: true }], returns: 'Task<Result>', isStatic: true, isAsync: true },
           ],
         }
       ],
@@ -103,6 +131,20 @@ export const cryptographyLibrary: LibraryDoc = {
       name: 'StangaNetLib.Cryptography.Models',
       summary: 'Types in StangaNetLib.Cryptography.Models.',
       types: [
+        {
+          slug: 'at-rest-kdf',
+          name: 'AtRestKdf',
+          displayName: 'AtRestKdf',
+          kind: 'enum',
+          namespace: 'StangaNetLib.Cryptography.Models',
+          summary: 'enum AtRestKdf.',
+          signature: 'public enum AtRestKdf : byte',
+          inherits: 'byte',
+          enumValues: [
+            { name: 'Pbkdf2Sha256', value: 1, summary: 'Pbkdf2Sha256' },
+            { name: 'HkdfSha256', value: 2, summary: 'HkdfSha256' },
+          ],
+        },
         {
           slug: 'crypto-hash-algorithm',
           name: 'CryptoHashAlgorithm',

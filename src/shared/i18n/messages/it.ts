@@ -22,7 +22,7 @@ export const it: Messages = {
     it: 'Italiano',
   },
   home: {
-    badge: 'Pensato per .NET 8 e 9',
+    badge: 'Pensato per .NET 8, 9 e 10',
     titleLine1: 'Building block di dominio.',
     titleLine2: 'Senza zavorra.',
     lead:
@@ -38,7 +38,7 @@ export const it: Messages = {
     exploreDocs: 'Esplora la docs',
     quickLabel: 'Avvio rapido',
     quickTitle: 'Operativi in tre passi.',
-    quickLeadBefore: 'I pacchetti sono pubblicati su GitHub Packages per .NET 8 e 9. Inizia con',
+    quickLeadBefore: 'I pacchetti sono pubblicati su GitHub Packages per .NET 8, 9 e 10. Inizia con',
     quickLeadAfter: ', poi integra le altre librerie della suite solo se ti servono.',
     step1Title: 'Aggiungi la sorgente NuGet',
     step2Title: 'Referenzia la libreria',
@@ -132,7 +132,7 @@ export const it: Messages = {
     author: 'Enrico Stangherlin',
     portfolio: 'Portfolio',
     tagline: 'Librerie scritte a mano · sito docs assistito da AI',
-    frameworks: '.NET 8 / 9',
+    frameworks: '.NET 8 / 9 / 10',
     docsFooter: 'Riferimento API',
   },
 };

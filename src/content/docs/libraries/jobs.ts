@@ -3,11 +3,11 @@ import type { LibraryDoc } from '../types';
 export const jobsLibrary: LibraryDoc = {
   slug: 'jobs',
   name: 'StangaNetLib.Jobs',
-  version: '1.0.1',
+  version: '1.1.0',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
-  tagline: 'Background job scheduling and execution',
+  tagline: 'Background jobs with idempotent enqueue and cron horizon',
   description:
-    'Job definitions, schedulers, and runners for reliable background work on top of Core concurrency primitives.',
+    'Background job infrastructure for recurring and scheduled jobs — in-memory backend and Hangfire adapter, with idempotent enqueue and cron materialization horizon on the in-memory backend.',
   repository: 'https://github.com/StangaNet/StangaNetLib.Jobs',
   namespaces: [
     {
@@ -176,6 +176,7 @@ export const jobsLibrary: LibraryDoc = {
             { name: 'DefaultRetryDelay', type: 'TimeSpan', access: 'get; set', summary: 'Delay between retry attempts in the in-memory backend. Defaults to 5 seconds.' },
             { name: 'WorkerCount', type: 'int', access: 'get; set', summary: 'Number of concurrent workers processing the in-memory job queue. Defaults to 4.' },
             { name: 'RecurringCheckInterval', type: 'TimeSpan', access: 'get; set', summary: 'How often the in-memory recurring-job scheduler checks for due jobs. Defaults to 30 seconds.' },
+            { name: 'MaterializeHorizonDays', type: 'int', access: 'get; set', summary: 'When greater than zero, the in-memory backend materializes recurring cron occurrences into scheduled one-off jobs for the next N days (single-instance). When 0, keeps the legacy fire-when-due poll behaviour. Default: 7. Hangfire ignores this setting.' },
           ],
           fields: [
             { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"JobsSettings"' },

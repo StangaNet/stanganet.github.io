@@ -3,11 +3,11 @@ import type { LibraryDoc } from '../types';
 export const requestProtectionLibrary: LibraryDoc = {
   slug: 'requestprotection',
   name: 'StangaNetLib.RequestProtection',
-  version: '1.0.1',
+  version: '1.1.0',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
-  tagline: 'Rate limiting and request abuse protection',
+  tagline: 'Rate limiting, AuthLockout preset, and required idempotency keys',
   description:
-    'ASP.NET request protection: rate limits, bot/abuse controls, backed by Caching where appropriate.',
+    'Distributed fixed-window rate limiting and idempotency deduplication (Caching-backed), with AuthLockout preset and optional required idempotency keys on matched paths.',
   repository: 'https://github.com/StangaNet/StangaNetLib.RequestProtection',
   namespaces: [
     {
@@ -40,6 +40,10 @@ export const requestProtectionLibrary: LibraryDoc = {
             { name: 'AddStangaNetLibRateLimit', signature: 'public static IServiceCollection AddStangaNetLibRateLimit( this IServiceCollection services, IConfiguration configuration)', summary: 'Registers IRateLimitService (RateLimitService), IRateLimitCounterStore (CacheRateLimitCounterStore), settings validation, and DistributedRateLimitingMiddleware.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
             { name: 'AddStangaNetLibRateLimitStore', signature: 'public static IServiceCollection AddStangaNetLibRateLimitStore<TStore>( this IServiceCollection services)', summary: 'Replaces the default IRateLimitCounterStore with a custom implementation. Use this to plug in an atomic Redis INCR store for strict enforcement under high concurrency.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }], returns: 'IServiceCollection', isStatic: true },
             { name: 'UseStangaNetLibRateLimit', signature: 'public static IApplicationBuilder UseStangaNetLibRateLimit(this IApplicationBuilder app)', summary: 'Adds DistributedRateLimitingMiddleware to the pipeline. Must be placed after UseRouting() so that endpoint metadata (and therefore [RateLimit] attributes) are available.', parameters: [{ name: 'app', type: 'IApplicationBuilder', description: 'app' }], returns: 'IApplicationBuilder', isStatic: true },
+            { name: 'AddStangaNetLibAuthLockoutRateLimit', signature: 'public static IServiceCollection AddStangaNetLibAuthLockoutRateLimit( this IServiceCollection services, int limit = 5, int windowSeconds = 900)', summary: 'Registers the AuthLockout rate-limit preset (default: 5 requests / 15 minutes / IP). This is an endpoint rate limit for failed-login surfaces; account-level lockout belongs in Auth ILoginAttemptService — combine both for defence in depth. Call after AddStangaNetLibRateLimit.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'limit', type: 'int', description: 'limit', optional: true }, { name: 'windowSeconds', type: 'int', description: 'windowSeconds', optional: true }], returns: 'IServiceCollection', isStatic: true },
+          ],
+          fields: [
+            { name: 'AuthLockoutPolicyName', type: 'string', summary: 'Policy name for the auth lockout rate-limit preset. Use with [RateLimit("AuthLockout")].', value: '"AuthLockout"' },
           ],
         }
       ],
@@ -100,6 +104,9 @@ export const requestProtectionLibrary: LibraryDoc = {
             { name: 'KeyExpiryMinutes', type: 'int', access: 'get; set', summary: 'KeyExpiryMinutes' },
             { name: 'ProtectedMethods', type: 'ICollection<string>', access: 'get; set', summary: 'HTTP methods (case-insensitive) whose requests are subject to idempotency processing. Default: POST and PATCH. PUT is naturally idempotent by REST convention and is excluded by default. Configurable from appsettings.json as a string array, e.g. ["POST","PATCH"].' },
             { name: 'LockTimeout', type: 'TimeSpan', access: 'get; set', summary: 'Duration of the in-flight processing lock used to detect and reject concurrent duplicate requests. Must be shorter than KeyExpiryMinutes. Default: 30 seconds.' },
+            { name: 'RequireKey', type: 'bool', access: 'get; set', summary: 'When true, requests that match RequiredPathPrefixes / RequiredPathPatterns must include HeaderName or receive HTTP 400.' },
+            { name: 'RequiredPathPrefixes', type: 'ICollection<string>', access: 'get; set', summary: 'Path prefixes (e.g. /api/import) that require an idempotency key when RequireKey is true. Comparison is ordinal-ignore-case against Path.Value.' },
+            { name: 'RequiredPathPatterns', type: 'ICollection<string>', access: 'get; set', summary: 'Simple wildcard path patterns (e.g. /api/*/write) that require an idempotency key when RequireKey is true. * matches a single path segment.' },
           ],
           fields: [
             { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"IdempotencyOptions"' },

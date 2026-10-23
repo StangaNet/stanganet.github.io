@@ -20,7 +20,7 @@ export const en = {
     it: 'Italiano',
   },
   home: {
-    badge: 'Built for .NET 8 and 9',
+    badge: 'Built for .NET 8, 9, and 10',
     titleLine1: 'Domain building blocks.',
     titleLine2: 'Without the baggage.',
     lead:
@@ -36,7 +36,7 @@ export const en = {
     exploreDocs: 'Explore docs',
     quickLabel: 'Quick start',
     quickTitle: 'Up and running in three steps.',
-    quickLeadBefore: 'Packages ship on GitHub Packages for .NET 8 and 9. Start with',
+    quickLeadBefore: 'Packages ship on GitHub Packages for .NET 8, 9, and 10. Start with',
     quickLeadAfter: ', then pull in other suite libraries only when you need them.',
     step1Title: 'Add the package source',
     step2Title: 'Reference the library',
@@ -130,7 +130,7 @@ export const en = {
     author: 'Enrico Stangherlin',
     portfolio: 'Portfolio',
     tagline: 'Hand-written libraries · AI-assisted docs site',
-    frameworks: '.NET 8 / 9',
+    frameworks: '.NET 8 / 9 / 10',
     docsFooter: 'API reference',
   },
 };

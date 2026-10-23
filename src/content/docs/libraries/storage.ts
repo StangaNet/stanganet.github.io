@@ -3,11 +3,11 @@ import type { LibraryDoc } from '../types';
 export const storageLibrary: LibraryDoc = {
   slug: 'storage',
   name: 'StangaNetLib.Storage',
-  version: '1.0.2',
+  version: '1.1.0',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
-  tagline: 'Blob/object storage abstractions and providers',
+  tagline: 'Blob storage with optional Cryptography at-rest encryption',
   description:
-    'Storage service contracts with local and cloud-oriented providers for binary object persistence.',
+    'Unified blob storage for local filesystem (local-only profile), S3, and Azure Blob with streaming, pre-signed URLs, lifecycle management, and optional at-rest encryption via StangaNetLib.Cryptography.',
   repository: 'https://github.com/StangaNet/StangaNetLib.Storage',
   namespaces: [
     {
@@ -57,7 +57,8 @@ export const storageLibrary: LibraryDoc = {
           signature: 'public static class ServiceCollectionExtensions',
           methods: [
             { name: 'AddStangaNetLibStorage', signature: 'public static IServiceCollection AddStangaNetLibStorage( this IServiceCollection services, IConfiguration configuration)', summary: 'Registers IBlobStorageService, IPresignedUrlService, and IContainerManager using the backend configured in StorageSettings:Provider.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'configuration', type: 'IConfiguration', description: 'configuration' }], returns: 'IServiceCollection', isStatic: true },
-            { name: 'AddStangaNetLibStorageLocal', signature: 'public static IServiceCollection AddStangaNetLibStorageLocal( this IServiceCollection services, string basePath = "wwwroot/storage", string baseUrl = "")', summary: 'Convenience overload that registers the Local filesystem provider directly, without requiring an appsettings file. Suitable for integration tests and development.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'basePath', type: 'string', description: 'basePath', optional: true }, { name: 'baseUrl', type: 'string', description: 'baseUrl', optional: true }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'AddStangaNetLibStorageLocal', signature: 'public static IServiceCollection AddStangaNetLibStorageLocal( this IServiceCollection services, string basePath = "wwwroot/storage", string baseUrl = "")', summary: 'Registers the Local filesystem provider directly, without requiring an appsettings file.', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'basePath', type: 'string', description: 'basePath', optional: true }, { name: 'baseUrl', type: 'string', description: 'baseUrl', optional: true }], returns: 'IServiceCollection', isStatic: true },
+            { name: 'AddStangaNetLibStorageLocalOnly', signature: 'public static IServiceCollection AddStangaNetLibStorageLocalOnly( this IServiceCollection services, string basePath = "wwwroot/storage", string baseUrl = "", bool encryptAtRest = false, string? enc...', summary: 'Local-only production profile: forces Local and optionally enables at-rest encryption (requires AddStangaNetLibCryptography).', parameters: [{ name: 'services', type: 'IServiceCollection', description: 'services' }, { name: 'basePath', type: 'string', description: 'basePath', optional: true }, { name: 'baseUrl', type: 'string', description: 'baseUrl', optional: true }, { name: 'encryptAtRest', type: 'bool', description: 'encryptAtRest', optional: true }, { name: 'encryptionPassphrase', type: 'string?', description: 'encryptionPassphrase', optional: true }], returns: 'IServiceCollection', isStatic: true },
           ],
         }
       ],
@@ -102,6 +103,19 @@ export const storageLibrary: LibraryDoc = {
           ],
         },
         {
+          slug: 'storage-encryption-settings',
+          name: 'StorageEncryptionSettings',
+          displayName: 'StorageEncryptionSettings',
+          kind: 'class',
+          namespace: 'StangaNetLib.Storage.Settings',
+          summary: 'At-rest encryption options for blob storage. Bound from StorageSettings:Encryption or configured via AddStangaNetLibStorageLocalOnly.',
+          signature: 'public sealed class StorageEncryptionSettings',
+          properties: [
+            { name: 'EncryptAtRest', type: 'bool', access: 'get; set', summary: 'When true, uploads are encrypted with IAtRestEncryptionService before being written to the underlying provider and decrypted on download. Requires AddStangaNetLibCryptography and a non-empty Passphrase.' },
+            { name: 'Passphrase', type: 'string', access: 'get; set', summary: 'Passphrase used to derive the AES key via PBKDF2. Prefer secrets configuration (environment / secret store) over committing this value to source control.' },
+          ],
+        },
+        {
           slug: 'storage-provider',
           name: 'StorageProvider',
           displayName: 'StorageProvider',
@@ -127,6 +141,7 @@ export const storageLibrary: LibraryDoc = {
             { name: 'Provider', type: 'StorageProvider', access: 'get; set', summary: 'Provider' },
             { name: 'LocalBasePath', type: 'string', access: 'get; set', summary: 'Root directory for the Local backend. Default: "wwwroot/storage".' },
             { name: 'LocalBaseUrl', type: 'string', access: 'get; set', summary: 'URL prefix used to build pre-signed download URLs for the local backend (e.g. "https://myapp.local/storage"). Default: "" — pre-signed URL generation is disabled until this is set.' },
+            { name: 'Encryption', type: 'StorageEncryptionSettings', access: 'get; set', summary: 'Encryption' },
           ],
           fields: [
             { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"StorageSettings"' },

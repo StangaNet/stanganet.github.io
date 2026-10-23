@@ -3,17 +3,26 @@ import type { LibraryDoc } from '../types';
 export const notificationsLibrary: LibraryDoc = {
   slug: 'notifications',
   name: 'StangaNetLib.Notifications',
-  version: '1.0.1',
+  version: '1.1.0',
   targetFrameworks: ['net8.0', 'net9.0', 'net10.0'],
-  tagline: 'Multi-channel notification dispatch and templates',
+  tagline: 'Multi-channel notifications with inbox and channel toggles',
   description:
-    'Notification channels, templates, and dispatch services for email and other providers.',
+    'Multi-channel notification dispatch (email, in-app, push) with templates, retry, delivery tracking, in-app inbox read-state, and per-channel enable flags.',
   repository: 'https://github.com/StangaNet/StangaNetLib.Notifications',
   namespaces: [
     {
       name: 'StangaNetLib.Notifications.Abstractions',
       summary: 'Types in StangaNetLib.Notifications.Abstractions.',
       types: [
+        {
+          slug: 'i-inbox-service',
+          name: 'IInboxService',
+          displayName: 'IInboxService',
+          kind: 'interface',
+          namespace: 'StangaNetLib.Notifications.Abstractions',
+          summary: 'interface IInboxService.',
+          signature: 'public interface IInboxService',
+        },
         {
           slug: 'i-notification-channel-provider',
           name: 'INotificationChannelProvider',
@@ -144,6 +153,8 @@ export const notificationsLibrary: LibraryDoc = {
             { name: 'FailureReason', type: 'string?', access: 'get; set', summary: 'FailureReason' },
             { name: 'CorrelationId', type: 'string?', access: 'get; init', summary: 'CorrelationId' },
             { name: 'UpdatedAt', type: 'DateTimeOffset?', access: 'get; set', summary: 'UpdatedAt' },
+            { name: 'IsRead', type: 'bool', access: 'get; set', summary: 'Whether the recipient has marked this in-app notification as read. Meaningful for InApp; ignored by other channels.' },
+            { name: 'ReadAt', type: 'DateTimeOffset?', access: 'get; set', summary: 'ReadAt' },
           ],
         },
         {
@@ -215,6 +226,9 @@ export const notificationsLibrary: LibraryDoc = {
             { name: 'RetryDelay', type: 'TimeSpan', access: 'get; set', summary: 'Base delay for the first retry attempt. When UseExponentialBackoff is true, subsequent delays double up to MaxRetryDelay. Defaults to 5 seconds.' },
             { name: 'MaxRetryDelay', type: 'TimeSpan', access: 'get; set', summary: 'Upper cap for exponential backoff delays. Ignored when UseExponentialBackoff is false. Defaults to 60 seconds.' },
             { name: 'UseExponentialBackoff', type: 'bool', access: 'get; set', summary: 'When true, retry delays follow an exponential backoff strategy: RetryDelay * 2^attempt, capped at MaxRetryDelay. When false, a fixed RetryDelay is used. Defaults to true.' },
+            { name: 'EnableEmail', type: 'bool', access: 'get; set', summary: 'EnableEmail' },
+            { name: 'EnableInApp', type: 'bool', access: 'get; set', summary: 'EnableInApp' },
+            { name: 'EnablePush', type: 'bool', access: 'get; set', summary: 'EnablePush' },
           ],
           fields: [
             { name: 'SectionName', type: 'string', summary: 'SectionName', value: '"NotificationsSettings"' },

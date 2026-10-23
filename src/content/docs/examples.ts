@@ -1,4 +1,4 @@
-﻿export type LocalizedText = { en: string; it: string };
+export type LocalizedText = { en: string; it: string };
 
 export type UsageSection = {
   id: string;
@@ -40,10 +40,10 @@ export const libraryExamples: LibraryExamplesDoc[] = [
     librarySlug: 'core',
     intro: L(
       'Practical patterns for entities, Result, guards, specifications, and unit of work. Copy what you need into a domain or application project that references StangaNetLib.Core.',
-      'Pattern pratici per entity, Result, guard, specification e unit of work. Copia ciò che ti serve in un progetto di dominio o applicazione che referenzia StangaNetLib.Core.',
+      'Pattern pratici per entity, Result, guard, specification e unit of work. Copia ci� che ti serve in un progetto di dominio o applicazione che referenzia StangaNetLib.Core.',
     ),
     sections: [
-      install('StangaNetLib.Core', '1.0.0'),
+      install('StangaNetLib.Core', '1.0.1'),
       {
         id: 'entity-result',
         title: L('Entity + Result', 'Entity + Result'),
@@ -89,7 +89,7 @@ result.Match(
         title: L('Guards', 'Guard'),
         description: L(
           'Validate arguments at the boundary; returns the value for fluent assignment.',
-          'Valida gli argomenti al confine; restituisce il valore per l’assegnazione fluente.',
+          'Valida gli argomenti al confine; restituisce il valore per l�assegnazione fluente.',
         ),
         code: `using StangaNetLib.Core.Guards;
 
@@ -153,7 +153,7 @@ public sealed class PlaceOrderHandler(IRepository<Order> orders, IUnitOfWork uow
       'Lock per chiave, throttle, work queue e debouncer per il coordinamento async.',
     ),
     sections: [
-      install('StangaNetLib.Concurrency', '1.0.0'),
+      install('StangaNetLib.Concurrency', '1.0.1'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -186,7 +186,7 @@ public sealed class ProfileUpdater(IKeyedLock keyedLock)
       'Pipeline Polly nominate che mappano i fallimenti sui tipi Result di Core.',
     ),
     sections: [
-      install('StangaNetLib.Resilience', '1.0.0'),
+      install('StangaNetLib.Resilience', '1.0.1'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -218,7 +218,7 @@ public sealed class RemoteClient(IResilientExecutor executor)
       'Cache in-memory o Redis con helper lock-aware basati su Concurrency.',
     ),
     sections: [
-      install('StangaNetLib.Caching', '1.0.1'),
+      install('StangaNetLib.Caching', '1.0.2'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -247,18 +247,21 @@ public sealed class ProfileCache(ICacheService cache)
   {
     librarySlug: 'storage',
     intro: L(
-      'Blob/object storage abstractions with local and cloud-oriented providers.',
-      'Astrazioni storage blob/object con provider locali e orientati al cloud.',
+      'Blob storage (local, S3, Azure) with optional Cryptography at-rest encryption.',
+      'Storage blob (local, S3, Azure) con cifratura at-rest opzionale via Cryptography.',
     ),
     sections: [
-      install('StangaNetLib.Storage', '1.0.1'),
+      install('StangaNetLib.Storage', '1.1.0'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
-        code: `using StangaNetLib.Storage.Extensions;
+        code: `using StangaNetLib.Cryptography.Extensions;
+using StangaNetLib.Storage.Extensions;
 
+builder.Services.AddStangaNetLibCryptography(); // required when EncryptAtRest is true
 builder.Services.AddStangaNetLibStorage(builder.Configuration);
-// or local: services.AddStangaNetLibStorageLocal(opt => opt.RootPath = "data/blobs");`,
+// Local-only profile with optional encryption:
+// services.AddStangaNetLibStorageLocalOnly("wwwroot/storage", encryptAtRest: true, encryptionPassphrase: "...");`,
       },
       {
         id: 'upload',
@@ -280,7 +283,7 @@ public sealed class AvatarStore(IBlobStorageService blobs)
       'Upload e pipeline di processing media, spesso abbinati a Storage.',
     ),
     sections: [
-      install('StangaNetLib.Media', '1.0.1'),
+      install('StangaNetLib.Media', '1.1.0'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -294,19 +297,35 @@ builder.Services.AddStangaNetLibMedia(builder.Configuration);
   {
     librarySlug: 'auth',
     intro: L(
-      'JWT auth wiring, Auth0 helpers, external IdP token exchange, and token store abstractions.',
-      'Wiring JWT, helper Auth0, token exchange IdP esterni e astrazioni token store.',
+      'Self-hosted JWT with Argon2id, TOTP MFA, login lockout, plus optional Auth0 and external IdP exchange.',
+      'JWT self-hosted con Argon2id, TOTP MFA, login lockout, pi� Auth0 e token exchange IdP opzionali.',
     ),
     sections: [
-      install('StangaNetLib.Auth', '1.1.0'),
+      install('StangaNetLib.Auth', '1.2.0'),
       {
         id: 'register',
-        title: L('Register', 'Registrazione'),
+        title: L('Self-hosted register', 'Registrazione self-hosted'),
         code: `using StangaNetLib.Auth.Extensions;
 
-builder.Services.AddStangaNetLibAuth(builder.Configuration);
-// Auth0: services.AddStangaNetLibAuth0(builder.Configuration);
-// Dev store: services.AddStangaNetLibAuthInMemoryTokenStore();`,
+// JWT + Argon2id + TOTP + login lockout (no Auth0)
+builder.Services.AddStangaNetLibAuthSelfHosted(builder.Configuration);
+// Or compose: AddStangaNetLibAuth + AddStangaNetLibAuthArgon2id + AddStangaNetLibAuthTotp + AddStangaNetLibAuthLoginLockout
+// Auth0: services.AddStangaNetLibAuth0(builder.Configuration);`,
+      },
+      {
+        id: 'totp-lockout',
+        title: L('TOTP MFA and lockout', 'TOTP MFA e lockout'),
+        code: `using StangaNetLib.Auth.Abstractions;
+
+// Enroll
+var secret = totp.GenerateSecret();
+var uri = totp.GetOtpAuthUri(secret, accountName: "user@example.com", issuer: "MyApp");
+
+// Verify + lockout
+if (await lockout.IsLockedOutAsync(userId, ct)) return Results.StatusCode(429);
+var ok = totp.Verify(secret, code);
+if (!ok) { await lockout.RecordFailureAsync(userId, ct); return Results.Unauthorized(); }
+await lockout.ResetAsync(userId, ct);`,
       },
       {
         id: 'external-providers',
@@ -335,20 +354,26 @@ if (result.IsFailure) return Results.Unauthorized();
   {
     librarySlug: 'observability',
     intro: L(
-      'Structured logging, metrics, and activity tracing helpers.',
-      'Helper per logging strutturato, metriche e activity tracing.',
+      'ASP.NET middleware for correlation, logging, ProblemDetails, and PII masking including financial fields.',
+      'Middleware ASP.NET per correlation, logging, ProblemDetails e masking PII inclusi campi finanziari.',
     ),
     sections: [
-      install('StangaNetLib.Observability', '1.0.0'),
+      install('StangaNetLib.Observability', '1.1.0'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
         code: `using StangaNetLib.Observability.Extensions;
 
-builder.Services.AddStangaNetLibObservability(opt =>
-{
-    opt.ServiceName = "MyApi";
-});`,
+builder.Services.AddStangaNetLibObservability();
+app.UseStangaNetLibObservability();`,
+      },
+      {
+        id: 'financial-mask',
+        title: L('Financial PII masking', 'Masking PII finanziaria'),
+        code: `using StangaNetLib.Observability.Masking;
+
+var masked = masking.MaskFinancialPii("IBAN IT60X0542811101000000123456 amount 1.234,56");
+// Also: MaskAmount / MaskIban / MaskDescription`,
       },
     ],
   },
@@ -359,7 +384,7 @@ builder.Services.AddStangaNetLibObservability(opt =>
       'Consenso, ciclo di vita DSAR, pseudonimizzazione e servizi GDPR correlati.',
     ),
     sections: [
-      install('StangaNetLib.Gdpr', '1.0.0'),
+      install('StangaNetLib.Gdpr', '1.0.1'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -372,11 +397,11 @@ builder.Services.AddStangaNetLibGdpr(builder.Configuration);`,
   {
     librarySlug: 'contentflow',
     intro: L(
-      'Content workflow: Draft → Pending → Approved → Published with review trails.',
-      'Workflow contenuti: Draft → Pending → Approved → Published con trail di review.',
+      'Content workflow: Draft ? Pending ? Approved ? Published with review trails.',
+      'Workflow contenuti: Draft ? Pending ? Approved ? Published con trail di review.',
     ),
     sections: [
-      install('StangaNetLib.ContentFlow', '1.1.0'),
+      install('StangaNetLib.ContentFlow', '1.1.1'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -390,17 +415,26 @@ builder.Services.AddStangaNetLibContentFlowType<Article>();`,
   {
     librarySlug: 'cryptography',
     intro: L(
-      'Encrypt/decrypt, hashing, and secret-handling helpers for application code.',
-      'Helper encrypt/decrypt, hashing e gestione secret per il codice applicativo.',
+      'Hashing, KDF, HMAC, and AES-GCM at-rest encryption with versioned SNEN envelopes.',
+      'Hashing, KDF, HMAC e cifratura AES-GCM at-rest con envelope SNEN versionati.',
     ),
     sections: [
-      install('StangaNetLib.Cryptography', '1.0.0'),
+      install('StangaNetLib.Cryptography', '1.1.0'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
         code: `using StangaNetLib.Cryptography.Extensions;
 
 builder.Services.AddStangaNetLibCryptography(builder.Configuration);`,
+      },
+      {
+        id: 'at-rest',
+        title: L('At-rest SNEN envelope', 'Envelope SNEN at-rest'),
+        code: `using StangaNetLib.Cryptography.Abstractions;
+
+var encrypted = atRest.EncryptBlob(plainBytes, passphrase);
+var decrypted = atRest.DecryptBlob(encrypted, passphrase);
+// Streams: EncryptStreamAsync / DecryptStreamAsync; files: FileEnvelope.WriteAsync / ReadAsync`,
       },
     ],
   },
@@ -411,7 +445,7 @@ builder.Services.AddStangaNetLibCryptography(builder.Configuration);`,
       'Risoluzione multi-tenant (header, claim, path, host) e accessor del contesto tenant.',
     ),
     sections: [
-      install('StangaNetLib.Tenancy', '1.0.0'),
+      install('StangaNetLib.Tenancy', '1.0.1'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -429,7 +463,7 @@ builder.Services.AddStangaNetLibTenancy(builder.Configuration);
       'Valutazione feature flag con provider in-memory e da configurazione.',
     ),
     sections: [
-      install('StangaNetLib.FeatureFlags', '1.0.0'),
+      install('StangaNetLib.FeatureFlags', '1.0.1'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -457,29 +491,39 @@ public sealed class Checkout(IFeatureFlagService flags)
   {
     librarySlug: 'jobs',
     intro: L(
-      'Background jobs with in-memory or Hangfire backends.',
-      'Job in background con backend in-memory o Hangfire.',
+      'Background jobs with idempotent enqueue and cron materialization horizon (in-memory).',
+      'Job in background con enqueue idempotente e orizzonte di materializzazione cron (in-memory).',
     ),
     sections: [
-      install('StangaNetLib.Jobs', '1.0.0'),
+      install('StangaNetLib.Jobs', '1.1.0'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
         code: `using StangaNetLib.Jobs.Extensions;
 
 builder.Services.AddStangaNetLibJobs(builder.Configuration);
-// or Hangfire: services.AddStangaNetLibJobsWithHangfire(builder.Configuration, hf => { /* ... */ });`,
+// JobsSettings.MaterializeHorizonDays defaults to 7 (in-memory only)
+// Hangfire: services.AddStangaNetLibJobsWithHangfire(builder.Configuration, hf => { /* ... */ });`,
+      },
+      {
+        id: 'idempotent-enqueue',
+        title: L('Idempotent enqueue', 'Enqueue idempotente'),
+        code: `using StangaNetLib.Jobs.Abstractions;
+
+await scheduler.EnqueueAsync<SendEmailJob, SendEmailArgs>(
+    args,
+    idempotencyKey: $"email:{userId}:{templateId}");`,
       },
     ],
   },
   {
     librarySlug: 'requestprotection',
     intro: L(
-      'Rate limiting and idempotency middleware backed by Caching.',
-      'Rate limiting e middleware di idempotenza basati su Caching.',
+      'Rate limiting with AuthLockout preset and optional required idempotency keys.',
+      'Rate limiting con preset AuthLockout e chiavi di idempotenza obbligatorie opzionali.',
     ),
     sections: [
-      install('StangaNetLib.RequestProtection', '1.0.0'),
+      install('StangaNetLib.RequestProtection', '1.1.0'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -487,42 +531,59 @@ builder.Services.AddStangaNetLibJobs(builder.Configuration);
 
 builder.Services.AddStangaNetLibCaching(builder.Configuration);
 builder.Services.AddStangaNetLibRateLimit(builder.Configuration);
-builder.Services.AddStangaNetLibIdempotency(builder.Configuration);`,
+builder.Services.AddStangaNetLibAuthLockoutRateLimit(); // [RateLimit("AuthLockout")]
+builder.Services.AddStangaNetLibIdempotency(opt =>
+{
+    opt.RequireKey = true;
+    opt.RequiredPathPrefixes = ["/api/payments"];
+});`,
       },
     ],
   },
   {
     librarySlug: 'schemaregistry',
     intro: L(
-      'Versioned JSON schema validation with in-memory or HTTP registry backends.',
-      'Validazione JSON schema versionata con backend in-memory o HTTP.',
+      'Versioned JSON schemas with portable backup-manifest seeding and registry snapshots.',
+      'JSON schema versionati con seed del backup-manifest e snapshot del registry.',
     ),
     sections: [
-      install('StangaNetLib.SchemaRegistry', '1.0.0'),
+      install('StangaNetLib.SchemaRegistry', '1.1.0'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
         code: `using StangaNetLib.SchemaRegistry.Extensions;
 
 builder.Services.AddStangaNetLibSchemaRegistry(builder.Configuration);
-// or: services.AddStangaNetLibInMemorySchemaRegistry();`,
+var app = builder.Build();
+await app.Services.AddStangaNetLibBackupManifestSchemasAsync();
+// Snapshot: SchemaRegistrySnapshot.ExportAsync / ImportAsync`,
       },
     ],
   },
   {
     librarySlug: 'notifications',
     intro: L(
-      'Multi-channel notification dispatch and templates.',
-      'Dispatch notifiche multi-canale e template.',
+      'Multi-channel dispatch (email, in-app, push) with inbox read-state and channel toggles.',
+      'Dispatch multi-canale (email, in-app, push) con inbox e flag per canale.',
     ),
     sections: [
-      install('StangaNetLib.Notifications', '1.0.0'),
+      install('StangaNetLib.Notifications', '1.1.0'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
         code: `using StangaNetLib.Notifications.Extensions;
 
-builder.Services.AddStangaNetLibNotifications(builder.Configuration);`,
+builder.Services.AddStangaNetLibNotifications(builder.Configuration);
+// NotificationsSettings: EnableEmail / EnableInApp / EnablePush`,
+      },
+      {
+        id: 'inbox',
+        title: L('In-app inbox', 'Inbox in-app'),
+        code: `using StangaNetLib.Notifications.Abstractions;
+
+var page = await inbox.GetInboxAsync(userId, skip: 0, take: 20, ct);
+await inbox.MarkAsReadAsync(userId, notificationId, ct);
+var unread = await inbox.GetUnreadCountAsync(userId, ct);`,
       },
     ],
   },
@@ -533,7 +594,7 @@ builder.Services.AddStangaNetLibNotifications(builder.Configuration);`,
       'Astrazioni di full-text search con provider BM25 in-memory.',
     ),
     sections: [
-      install('StangaNetLib.Search', '1.0.0'),
+      install('StangaNetLib.Search', '1.0.1'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),
@@ -551,7 +612,7 @@ builder.Services.AddStangaNetLibSearch<ProductDocument>("products");
       'Messaging pub/sub con provider in-memory e stile RabbitMQ.',
     ),
     sections: [
-      install('StangaNetLib.EventBus', '1.0.0'),
+      install('StangaNetLib.EventBus', '1.0.1'),
       {
         id: 'register',
         title: L('Register', 'Registrazione'),

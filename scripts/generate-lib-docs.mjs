@@ -12,9 +12,9 @@ const SKIP = new Set(['StangaNetLib.Core']); // already hand-authored
 const META = {
   Auth: {
     slug: 'auth',
-    tagline: 'Authentication and authorization building blocks for ASP.NET',
+    tagline: 'Self-hosted JWT auth with Argon2id, TOTP MFA, and login lockout',
     description:
-      'Auth primitives for token handling, identity, and policy helpers aligned with StangaNetLib.Core Result patterns.',
+      'JWT issuance/validation with refresh-token rotation, pluggable password hashing (BCrypt / Argon2id), TOTP MFA, login lockout, cache-backed revocation, optional Auth0 and external IdP exchange (Google, Apple, Facebook, Microsoft).',
   },
   Caching: {
     slug: 'caching',
@@ -36,9 +36,9 @@ const META = {
   },
   Cryptography: {
     slug: 'cryptography',
-    tagline: 'Encryption, hashing, and secret-handling helpers',
+    tagline: 'Hashing, KDF, HMAC, and AES-GCM at-rest SNEN envelopes',
     description:
-      'Cryptographic utilities (encrypt/decrypt, hash, protect) designed for application and domain use without heavy framework coupling.',
+      'Hashing, key derivation, HMAC, AES-GCM encryption, versioned SNEN at-rest blob/stream envelopes, RSA digital signatures, and secure token generation.',
   },
   EventBus: {
     slug: 'eventbus',
@@ -60,33 +60,33 @@ const META = {
   },
   Jobs: {
     slug: 'jobs',
-    tagline: 'Background job scheduling and execution',
+    tagline: 'Background jobs with idempotent enqueue and cron horizon',
     description:
-      'Job definitions, schedulers, and runners for reliable background work on top of Core concurrency primitives.',
+      'Background job infrastructure for recurring and scheduled jobs — in-memory backend and Hangfire adapter, with idempotent enqueue and cron materialization horizon on the in-memory backend.',
   },
   Media: {
     slug: 'media',
-    tagline: 'Media storage, processing, and metadata',
+    tagline: 'Image variants, magic-byte validation, and photo storage',
     description:
-      'Media asset abstractions for upload, storage backends, and processing pipelines.',
+      'Image optimization (multi-variant JPEG/WebP), magic-byte validation before decode, and cloud/local photo storage backed by StangaNetLib.Storage.',
   },
   Notifications: {
     slug: 'notifications',
-    tagline: 'Multi-channel notification dispatch and templates',
+    tagline: 'Multi-channel notifications with inbox and channel toggles',
     description:
-      'Notification channels, templates, and dispatch services for email and other providers.',
+      'Multi-channel notification dispatch (email, in-app, push) with templates, retry, delivery tracking, in-app inbox read-state, and per-channel enable flags.',
   },
   Observability: {
     slug: 'observability',
-    tagline: 'Logging, metrics, and tracing helpers',
+    tagline: 'ASP.NET observability middleware with financial PII masking',
     description:
-      'Observability wiring for structured logging, metrics, and activity tracing across StangaNetLib services.',
+      'Correlation IDs, request logging, ProblemDetails exceptions, ETag, security headers, and PII log masking including financial helpers (amount, IBAN, description).',
   },
   RequestProtection: {
     slug: 'requestprotection',
-    tagline: 'Rate limiting and request abuse protection',
+    tagline: 'Rate limiting, AuthLockout preset, and required idempotency keys',
     description:
-      'ASP.NET request protection: rate limits, bot/abuse controls, backed by Caching where appropriate.',
+      'Distributed fixed-window rate limiting and idempotency deduplication (Caching-backed), with AuthLockout preset and optional required idempotency keys on matched paths.',
   },
   Resilience: {
     slug: 'resilience',
@@ -96,9 +96,9 @@ const META = {
   },
   SchemaRegistry: {
     slug: 'schemaregistry',
-    tagline: 'Versioned JSON schema validation',
+    tagline: 'Versioned JSON schemas with portable backup manifests',
     description:
-      'Schema registry for versioned JSON contracts with validation against registered schemas.',
+      'JSON payload validation against versioned schemas with in-process and remote registry backends, portable backup-manifest schemas, and registry snapshot export/import.',
   },
   Search: {
     slug: 'search',
@@ -108,9 +108,9 @@ const META = {
   },
   Storage: {
     slug: 'storage',
-    tagline: 'Blob/object storage abstractions and providers',
+    tagline: 'Blob storage with optional Cryptography at-rest encryption',
     description:
-      'Storage service contracts with local and cloud-oriented providers for binary object persistence.',
+      'Unified blob storage for local filesystem (local-only profile), S3, and Azure Blob with streaming, pre-signed URLs, lifecycle management, and optional at-rest encryption via StangaNetLib.Cryptography.',
   },
   Tenancy: {
     slug: 'tenancy',
