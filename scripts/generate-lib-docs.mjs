@@ -16,6 +16,12 @@ const META = {
     description:
       'JWT issuance/validation with refresh-token rotation, pluggable password hashing (BCrypt / Argon2id), TOTP MFA, login lockout, cache-backed revocation, optional Auth0 and external IdP exchange (Google, Apple, Facebook, Microsoft).',
   },
+  Backup: {
+    slug: 'backup',
+    tagline: 'Encrypted portable backups with versioned manifests',
+    description:
+      'Create, verify, and restore encrypted portable backups for self-hosted apps (SNEN envelope + ZIP + versioned manifest). Uses Cryptography and SchemaRegistry.',
+  },
   Caching: {
     slug: 'caching',
     tagline: 'In-memory and distributed caching with lock-aware helpers',
@@ -39,6 +45,12 @@ const META = {
     tagline: 'Hashing, KDF, HMAC, and AES-GCM at-rest SNEN envelopes',
     description:
       'Hashing, key derivation, HMAC, AES-GCM encryption, versioned SNEN at-rest blob/stream envelopes, RSA digital signatures, and secure token generation.',
+  },
+  EncryptedStorage: {
+    slug: 'encryptedstorage',
+    tagline: 'Encrypted-at-rest local blob storage with SNEN envelopes',
+    description:
+      'Encrypted-at-rest blob storage for self-hosted apps: composes StangaNetLib.Storage (Local) with StangaNetLib.Cryptography (SNEN AES-GCM envelopes). No network egress required.',
   },
   EventBus: {
     slug: 'eventbus',
@@ -70,6 +82,12 @@ const META = {
     description:
       'Image optimization (multi-variant JPEG/WebP), magic-byte validation before decode, and cloud/local photo storage backed by StangaNetLib.Storage.',
   },
+  Money: {
+    slug: 'money',
+    tagline: 'Minor-unit Money value object with EUR-first arithmetic',
+    description:
+      'Safe monetary primitives for .NET: minor-unit (cents) Money value object with EUR-first arithmetic, allocate/split, parse/format. Depends on StangaNetLib.Core.',
+  },
   Notifications: {
     slug: 'notifications',
     tagline: 'Multi-channel notifications with inbox and channel toggles',
@@ -81,6 +99,12 @@ const META = {
     tagline: 'ASP.NET observability middleware with financial PII masking',
     description:
       'Correlation IDs, request logging, ProblemDetails exceptions, ETag, security headers, and PII log masking including financial helpers (amount, IBAN, description).',
+  },
+  Recurrence: {
+    slug: 'recurrence',
+    tagline: 'Recurring calendar rules with idempotent occurrence materialization',
+    description:
+      'Recurring rule engine with idempotent occurrence materialization to a configurable horizon. Calendar logic only — scheduling stays in StangaNetLib.Jobs or the host.',
   },
   RequestProtection: {
     slug: 'requestprotection',
@@ -650,6 +674,7 @@ function main() {
       exportName: (() => {
         const exportMap = {
           ContentFlow: 'contentFlowLibrary',
+          EncryptedStorage: 'encryptedStorageLibrary',
           FeatureFlags: 'featureFlagsLibrary',
           RequestProtection: 'requestProtectionLibrary',
           SchemaRegistry: 'schemaRegistryLibrary',

@@ -16,18 +16,22 @@ export { kindLabels } from './types';
 
 import type { LibraryDoc } from './types';
 import { authLibrary } from './libraries/auth';
+import { backupLibrary } from './libraries/backup';
 import { cachingLibrary } from './libraries/caching';
 import { concurrencyLibrary } from './libraries/concurrency';
 import { contentFlowLibrary } from './libraries/contentflow';
 import { coreLibrary } from './libraries/core';
 import { cryptographyLibrary } from './libraries/cryptography';
+import { encryptedStorageLibrary } from './libraries/encryptedstorage';
 import { eventBusLibrary } from './libraries/eventbus';
 import { featureFlagsLibrary } from './libraries/featureflags';
 import { gdprLibrary } from './libraries/gdpr';
 import { jobsLibrary } from './libraries/jobs';
 import { mediaLibrary } from './libraries/media';
+import { moneyLibrary } from './libraries/money';
 import { notificationsLibrary } from './libraries/notifications';
 import { observabilityLibrary } from './libraries/observability';
+import { recurrenceLibrary } from './libraries/recurrence';
 import { requestProtectionLibrary } from './libraries/requestprotection';
 import { resilienceLibrary } from './libraries/resilience';
 import { schemaRegistryLibrary } from './libraries/schemaregistry';
@@ -43,17 +47,21 @@ export const librariesEn: LibraryDoc[] = [
   resilienceLibrary,
   cachingLibrary,
   storageLibrary,
+  encryptedStorageLibrary,
   mediaLibrary,
   authLibrary,
   observabilityLibrary,
   gdprLibrary,
   contentFlowLibrary,
   cryptographyLibrary,
+  moneyLibrary,
   tenancyLibrary,
   featureFlagsLibrary,
   jobsLibrary,
+  recurrenceLibrary,
   requestProtectionLibrary,
   schemaRegistryLibrary,
+  backupLibrary,
   notificationsLibrary,
   searchLibrary,
   eventBusLibrary,

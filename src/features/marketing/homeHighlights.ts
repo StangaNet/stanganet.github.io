@@ -61,6 +61,30 @@ const libraryHighlightsEn: Record<string, readonly HighlightPair[]> = {
     ['SchemaRegistrySnapshot', 'Export/import registry state'],
     ['ISchemaRegistry', 'Versioned JSON validation'],
   ],
+  money: [
+    ['Money', 'Minor-unit (cents) value object'],
+    ['Allocate / Split', 'Remainder-safe distribution'],
+    ['EUR-first', 'Cross-currency arithmetic fails safely'],
+    ['Format / Parse', 'Culture-aware money strings'],
+  ],
+  encryptedstorage: [
+    ['IEncryptedBlobStorage', 'Explicit encrypted blob API'],
+    ['SNEN envelopes', 'AES-GCM via Cryptography'],
+    ['VerifyAsync', 'Integrity check without decrypt'],
+    ['Local-only', 'No network egress required'],
+  ],
+  recurrence: [
+    ['IRecurrenceMaterializer', 'Idempotent occurrence creation'],
+    ['RecurrenceRule', 'Daily/weekly/monthly calendar rules'],
+    ['HorizonDays', 'Materialize ahead of schedule'],
+    ['Jobs-friendly', 'Calendar logic, not execution'],
+  ],
+  backup: [
+    ['IBackupService', 'Create, verify, restore .snbak'],
+    ['SNEN + ZIP', 'Encrypted portable archives'],
+    ['Backup manifests', 'SchemaRegistry-validated'],
+    ['Part exporters', 'Host-owned export/import hooks'],
+  ],
 };
 
 const libraryHighlightsIt: Record<string, readonly HighlightPair[]> = {
@@ -123,6 +147,30 @@ const libraryHighlightsIt: Record<string, readonly HighlightPair[]> = {
     ['BackupManifestSchemaSeeder', 'Seed stanganet.backup.manifest'],
     ['SchemaRegistrySnapshot', 'Export/import stato registry'],
     ['ISchemaRegistry', 'Validazione JSON versionata'],
+  ],
+  money: [
+    ['Money', 'Value object in unità minori (centesimi)'],
+    ['Allocate / Split', 'Distribuzione senza perdita di resto'],
+    ['EUR-first', 'Aritmetica cross-currency che fallisce in sicurezza'],
+    ['Format / Parse', 'Stringhe money culture-aware'],
+  ],
+  encryptedstorage: [
+    ['IEncryptedBlobStorage', 'API blob cifrati esplicita'],
+    ['SNEN envelopes', 'AES-GCM via Cryptography'],
+    ['VerifyAsync', 'Check di integrità senza decrypt'],
+    ['Local-only', 'Nessuna egress di rete'],
+  ],
+  recurrence: [
+    ['IRecurrenceMaterializer', 'Creazione occorrenze idempotente'],
+    ['RecurrenceRule', 'Regole daily/weekly/monthly'],
+    ['HorizonDays', 'Materializza in anticipo'],
+    ['Jobs-friendly', 'Logica calendario, non esecuzione'],
+  ],
+  backup: [
+    ['IBackupService', 'Crea, verifica, ripristina .snbak'],
+    ['SNEN + ZIP', 'Archivi portabili cifrati'],
+    ['Backup manifests', 'Validati da SchemaRegistry'],
+    ['Part exporters', 'Hook export/import del host'],
   ],
 };
 

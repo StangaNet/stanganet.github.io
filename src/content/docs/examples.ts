@@ -623,6 +623,110 @@ builder.Services.AddStangaNetLibEventBus(builder.Configuration);
       },
     ],
   },
+  {
+    librarySlug: 'money',
+    intro: L(
+      'Minor-unit Money value object with EUR-first arithmetic, allocate/split, and formatting.',
+      'Value object Money in unità minori con aritmetica EUR-first, allocate/split e formattazione.',
+    ),
+    sections: [
+      install('StangaNetLib.Money', '1.0.0'),
+      {
+        id: 'usage',
+        title: L('Create and allocate', 'Creazione e allocate'),
+        code: `using StangaNetLib.Money.ValueObjects;
+
+var price = Money.FromDecimal(12.34m).Value!;
+var tax = price.Multiply(0.22m).Value!;
+var total = price.Add(tax).Value!;
+var shares = total.Allocate(3).Value!;
+Console.WriteLine(total.Format());`,
+      },
+    ],
+  },
+  {
+    librarySlug: 'encryptedstorage',
+    intro: L(
+      'Local encrypted-at-rest blobs via Storage + Cryptography SNEN envelopes.',
+      'Blob locali cifrati at-rest via Storage + envelope SNEN di Cryptography.',
+    ),
+    sections: [
+      install('StangaNetLib.EncryptedStorage', '1.0.0'),
+      {
+        id: 'register',
+        title: L('Register and upload', 'Registrazione e upload'),
+        code: `using StangaNetLib.EncryptedStorage.Abstractions;
+using StangaNetLib.EncryptedStorage.Extensions;
+
+builder.Services.AddStangaNetLibEncryptedStorage(
+    rootPath: "/var/app/blobs",
+    passphrase: builder.Configuration["EncryptedStorageSettings:Passphrase"]!);
+
+var store = sp.GetRequiredService<IEncryptedBlobStorage>();
+await using var input = File.OpenRead("doc.pdf");
+var uploaded = await store.UploadAsync(input, "application/pdf");
+await store.VerifyAsync(uploaded.Value!.BlobId);`,
+      },
+    ],
+  },
+  {
+    librarySlug: 'recurrence',
+    intro: L(
+      'Calendar recurrence rules with idempotent occurrence materialization to a horizon.',
+      'Regole di ricorrenza calendario con materializzazione idempotente delle occorrenze.',
+    ),
+    sections: [
+      install('StangaNetLib.Recurrence', '1.0.0'),
+      {
+        id: 'register',
+        title: L('Register and materialize', 'Registrazione e materializzazione'),
+        code: `using StangaNetLib.Recurrence.Abstractions;
+using StangaNetLib.Recurrence.Extensions;
+using StangaNetLib.Recurrence.Models;
+
+builder.Services.AddStangaNetLibRecurrenceInMemory(builder.Configuration);
+
+await rules.SaveAsync(new RecurrenceRule
+{
+    Id = "rent",
+    Frequency = RecurrenceFrequency.Monthly,
+    Interval = 1,
+    DayOfMonth = 31,
+    Start = new DateOnly(2026, 1, 31),
+    TimeZoneId = "UTC"
+});
+await materializer.MaterializeAsync(); // HorizonDays default 60`,
+      },
+    ],
+  },
+  {
+    librarySlug: 'backup',
+    intro: L(
+      'Encrypted portable .snbak archives with SchemaRegistry-validated manifests.',
+      'Archivi .snbak portabili cifrati con manifest validati da SchemaRegistry.',
+    ),
+    sections: [
+      install('StangaNetLib.Backup', '1.0.0'),
+      {
+        id: 'register',
+        title: L('Create and verify backup', 'Crea e verifica backup'),
+        code: `using StangaNetLib.Backup.Abstractions;
+using StangaNetLib.Backup.Extensions;
+using StangaNetLib.SchemaRegistry.Extensions;
+
+builder.Services.AddStangaNetLibInMemorySchemaRegistry();
+builder.Services.AddSingleton<IBackupPartExporter, MyExporter>();
+builder.Services.AddSingleton<IBackupPartImporter, MyImporter>();
+builder.Services.AddStangaNetLibBackup(builder.Configuration);
+
+var app = builder.Build();
+await app.Services.AddStangaNetLibBackupManifestSchemasAsync();
+var backups = app.Services.GetRequiredService<IBackupService>();
+await backups.CreateBackupAsync("instance.snbak", passphrase, product: "MyApp");
+await backups.VerifyBackupAsync("instance.snbak", passphrase);`,
+      },
+    ],
+  },
 ];
 
 export function getLibraryExamples(slug: string): LibraryExamplesDoc | undefined {

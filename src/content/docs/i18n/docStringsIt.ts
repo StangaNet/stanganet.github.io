@@ -99,4 +99,20 @@ export const docStringsIt: Record<string, string> = {
     "Contesto e risoluzione multi-tenant",
   "Tenant identification, context accessors, and resolution strategies for multi-tenant applications.":
     "Identificazione tenant, accessor di contesto e strategie di risoluzione per applicazioni multi-tenant.",
+  "Minor-unit Money value object with EUR-first arithmetic":
+    "Value object Money in unità minori con aritmetica EUR-first",
+  "Safe monetary primitives for .NET: minor-unit (cents) Money value object with EUR-first arithmetic, allocate/split, parse/format. Depends on StangaNetLib.Core.":
+    "Primitivi monetari sicuri per .NET: value object Money in unità minori (centesimi) con aritmetica EUR-first, allocate/split, parse/format. Dipende da StangaNetLib.Core.",
+  "Encrypted-at-rest local blob storage with SNEN envelopes":
+    "Storage blob locale cifrato at-rest con envelope SNEN",
+  "Encrypted-at-rest blob storage for self-hosted apps: composes StangaNetLib.Storage (Local) with StangaNetLib.Cryptography (SNEN AES-GCM envelopes). No network egress required.":
+    "Storage blob cifrato at-rest per app self-hosted: compone StangaNetLib.Storage (Local) con StangaNetLib.Cryptography (envelope SNEN AES-GCM). Nessuna egress di rete.",
+  "Recurring calendar rules with idempotent occurrence materialization":
+    "Regole di ricorrenza calendario con materializzazione idempotente",
+  "Recurring rule engine with idempotent occurrence materialization to a configurable horizon. Calendar logic only — scheduling stays in StangaNetLib.Jobs or the host.":
+    "Motore di regole ricorrenti con materializzazione idempotente delle occorrenze fino a un orizzonte configurabile. Solo logica calendario — lo scheduling resta in StangaNetLib.Jobs o nel host.",
+  "Encrypted portable backups with versioned manifests":
+    "Backup portabili cifrati con manifest versionati",
+  "Create, verify, and restore encrypted portable backups for self-hosted apps (SNEN envelope + ZIP + versioned manifest). Uses Cryptography and SchemaRegistry.":
+    "Crea, verifica e ripristina backup portabili cifrati per app self-hosted (envelope SNEN + ZIP + manifest versionato). Usa Cryptography e SchemaRegistry.",
 };
